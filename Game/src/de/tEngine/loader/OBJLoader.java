@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+import de.tEngine.math.*;
 
 import de.tEngine.core.Mesh;
 import de.tEngine.core.Model;
@@ -76,20 +75,20 @@ public class OBJLoader {
 			{
 				//Compute the face normal Vector
 				Vector3f dir1 = null, dir2 = null;
-				dir1 = Vector3f.sub(vertices.get(indices.get(i + 1)).getPosition(), vertices.get(indices.get(i)).getPosition(), dir1);
-				dir2 = Vector3f.sub(vertices.get(indices.get(i + 2)).getPosition(), vertices.get(indices.get(i)).getPosition(), dir2);
+				dir1 = Vector3f.sub(vertices.get(indices.get(i + 1)).getPosition(), vertices.get(indices.get(i)).getPosition());
+				dir2 = Vector3f.sub(vertices.get(indices.get(i + 2)).getPosition(), vertices.get(indices.get(i)).getPosition());
 				Vector3f normal = null;
-				normal = Vector3f.cross(dir1, dir2, normal);
-				normal.normalise(normal);
+				normal = Vector3f.cross(dir1, dir2);
+				normal.normalize();
 				//Add it to the vertices normal vector
-				vertices.get(indices.get(i)).setNormal(Vector3f.add(normal, vertices.get(indices.get(i)).getNormal(), vertices.get(indices.get(i)).getNormal()));
-				Vector3f.add(normal, vertices.get(indices.get(i + 1)).getNormal(), vertices.get(indices.get(i + 1)).getNormal());
-				Vector3f.add(normal, vertices.get(indices.get(i + 2)).getNormal(), vertices.get(indices.get(i + 2)).getNormal());
+				vertices.get(indices.get(i)).setNormal(Vector3f.add(normal, vertices.get(indices.get(i)).getNormal()));
+				Vector3f.add(normal, vertices.get(indices.get(i + 1)).getNormal());
+				Vector3f.add(normal, vertices.get(indices.get(i + 2)).getNormal());
 			}
 			//normalise all the normal vectors
 			for(int i =0; i< vertices.size(); i++)
 			{
-				vertices.get(i).getNormal().normalise(vertices.get(i).getNormal());
+				vertices.get(i).getNormal().normalize();
 			}
 			int[] ints = new int[indices.size()];
 			for(int i =0; i < ints.length;i++)

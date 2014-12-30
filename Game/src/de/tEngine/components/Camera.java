@@ -1,9 +1,12 @@
-package de.tEngine.core;
+package de.tEngine.components;
 
+import de.tEngine.core.Engine;
+import de.tEngine.core.GameObject;
 import de.tEngine.math.*;
 import de.tEngine.shaders.BasicShader;
+import de.tEngine.shaders.MaterialShader;
 
-public class Camera extends GameObject {
+public class Camera extends Component {
 
 	private float nearPlane;
 	private float farPlane;
@@ -58,23 +61,12 @@ public class Camera extends GameObject {
 	 */
 	public Camera(int width, int height, float nearPlane, float farPlane,
 			float fov, ProjectionType projectionType) {
-		super(null);
-
 		this.width = width;
 		this.height = height;
 		this.nearPlane = nearPlane;
 		this.farPlane = farPlane;
 		this.fov = fov;
 		this.setProjectionType(projectionType);
-	}
-
-	@Override
-	public void renderSingleInstance(BasicShader s) {
-		// overriding the render method of the gameobject class
-	}
-
-	@Override
-	public void renderMultipleInstances(BasicShader s) {
 	}
 
 	/**
@@ -127,6 +119,12 @@ public class Camera extends GameObject {
 
 	public void setProjectionType(ProjectionType projectionType) {
 		this.projectionType = projectionType;
+	}
+	
+	public void bind(){
+		MaterialShader shader = Engine.getActiveEngine().getRenderer().getBoundMaterialShader();
+		shader.SetViewMatrix(this.getViewMatrix());
+		shader.SetProjMatrix(this.getProjectionMatrix());
 	}
 
 }

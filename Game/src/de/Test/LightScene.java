@@ -5,9 +5,9 @@ import java.awt.Color;
 import org.lwjgl.input.Keyboard;
 
 import de.tEngine.math.*;
+import de.tEngine.components.Camera;
 import de.tEngine.components.DirectionalLight;
 import de.tEngine.components.PointLight;
-import de.tEngine.core.Camera;
 import de.tEngine.core.GameObject;
 import de.tEngine.core.Model;
 import de.tEngine.core.Scene;
@@ -24,7 +24,9 @@ public class LightScene extends Scene {
 	private int timer = 0;
 
 	public void init() {
+		GameObject cameraObject = new GameObject(null);
 		camera = new Camera(1280, 720, 0.1f, 1000.0f, 70.0f);
+		cameraObject.addComponent(camera);
 		camera.getTransform().setPosition(new Vector3f(0, 2, 10));
 		super.setClearColor(Color.blue);
 

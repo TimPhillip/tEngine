@@ -1,7 +1,6 @@
 package de.tEngine.core;
 
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+import de.tEngine.math.*;
 
 public class Vertex {
 	

@@ -1,6 +1,11 @@
 package de.tEngine.core;
 
 import java.awt.Color;
+
+import org.lwjgl.opengl.GL11;
+
+import de.tEngine.shaders.MaterialShader;
+import de.tEngine.shaders.BasicShader;
 /**
  * A material represents how an object is rendered.
  * This includes textures but also how light effects the look of an object.
@@ -8,7 +13,7 @@ import java.awt.Color;
  *
  */
 public class Material {
-	
+	private MaterialShader shader;
 	private Color color;
 	private boolean glow;
 	//If true back face culling is disabled when you're drawing with this shader.
@@ -24,12 +29,34 @@ public class Material {
 	 */
 	public Material()
 	{
+		shader = new BasicShader();
 		texture = Texture.loadFromFile("white.png");
 		setColor(Color.WHITE);
 		setGlow(false);
 		doubleSided = false;
 		tilesU = 1.0f;
 		tilesV = 1.0f;
+	}
+	
+	public void bind(){
+		shader.bind();
+		setOpenGlStates();
+		shader.SetMaterial(this);
+		texture.bind();
+	}
+	
+	private void setOpenGlStates(){
+		// Check if Material uses Backface-Culling
+		if (!isDoubleSided())
+			GL11.glEnable(GL11.GL_CULL_FACE);
+		else
+			GL11.glDisable(GL11.GL_CULL_FACE);
+		// Check if Material uses wireframe
+		if (isWireframe()) {
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+		} else {
+			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		}
 	}
 	
 	/**

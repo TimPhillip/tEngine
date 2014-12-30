@@ -24,4 +24,16 @@ public class Editor extends Engine {
 		e.start(new LightScene());
 	}
 
+	@Override
+	protected void input() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import de.tEngine.machine.OperatingSystem;
+
 /**
  * This class holds a specific model. A model is the combination of a mesh and
  * textures.
@@ -64,11 +66,11 @@ public class Model {
 	 */
 	public void prepareMultiRendering() {
 		// Bind the mesh data
-		if (OperatingSystem.isWindows()) {
+		/*if (OperatingSystem.isWindows()) {
 			GL30.glBindVertexArray(mesh.getVaoID());
 		} else if (OperatingSystem.isMac()) {
 			APPLEVertexArrayObject.glBindVertexArrayAPPLE(mesh.getVaoID());
-		}
+		}*/
 		// Enable Position data of the vertex
 		GL20.glEnableVertexAttribArray(0);
 		// Enable TexCoord data of the vertex
@@ -97,7 +99,7 @@ public class Model {
 		// Bind the texture
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, material.getTexture().getId());
-		mesh.drawElements();
+		mesh.draw();
 
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
@@ -110,7 +112,7 @@ public class Model {
 	 * preparation and clean up.
 	 */
 	public void renderMultipleInstances() {
-		mesh.drawElements();
+		mesh.draw();
 	}
 
 	/**
@@ -120,11 +122,11 @@ public class Model {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
-		if (OperatingSystem.isWindows()) {
+		/*if (OperatingSystem.isWindows()) {
 			GL30.glBindVertexArray(0);
 		} else if (OperatingSystem.isMac()) {
 			APPLEVertexArrayObject.glBindVertexArrayAPPLE(0);
-		}
+		}*/
 	}
 
 	/**
@@ -160,5 +162,10 @@ public class Model {
 	 */
 	public Mesh getMesh() {
 		return mesh;
+	}
+	
+	public void bind(){
+		material.bind();
+		mesh.bind();
 	}
 }

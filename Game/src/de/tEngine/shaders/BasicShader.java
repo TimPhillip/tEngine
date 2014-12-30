@@ -10,14 +10,11 @@ import de.tEngine.math.*;
 import de.tEngine.components.PointLight;
 import de.tEngine.core.Material;
 
-public class BasicShader extends Shader {
+public class BasicShader extends MaterialShader {
 
-	private static final String VERTEX_FILE = "src/de/tEngine/shaders/basic.vs.glsl";
-	private static final String FRAGMENT_FILE = "src/de/tEngine/shaders/basic.fs.glsl";
-	
-	private int worldMatrix_Location;
-	private int projectionMatrix_Location;
-	private int viewMatrix_Location;
+	private static final String VERTEX_FILE = "src/de/tEngine/shaders/basic2.vs.glsl";
+	private static final String FRAGMENT_FILE = "src/de/tEngine/shaders/basic2.fs.glsl";
+
 	private int lightPosition_Location;
 	private int lightColor_Location;
 	
@@ -36,30 +33,16 @@ public class BasicShader extends Shader {
 		super.bindAttribute(2, "normal");
 	}
 	
+	@Override
 	protected void GetAllUniformLocations()
 	{
 		worldMatrix_Location = super.GetUniformLocation("worldMatrix");
-		projectionMatrix_Location = super.GetUniformLocation("projectionMatrix");
+		projMatrix_Location = super.GetUniformLocation("projectionMatrix");
 		viewMatrix_Location = super.GetUniformLocation("viewMatrix");
 		lightPosition_Location = super.GetUniformLocation("lightPosition");
 		lightColor_Location = super.GetUniformLocation("lightColor");
 		isGlowing_Location = super.GetUniformLocation("isGlowing");
 		matColor_Location = super.GetUniformLocation("matColor");
-	}
-	
-	public void SetWorldMatrix(Matrix4f matrix)
-	{
-		super.SetUniformMatrix4f(worldMatrix_Location, matrix);
-	}
-	
-	public void SetProjectionMatrix(Matrix4f matrix)
-	{
-		super.SetUniformMatrix4f(projectionMatrix_Location, matrix);
-	}
-	
-	public void SetViewMatrix(Matrix4f matrix)
-	{
-		super.SetUniformMatrix4f(viewMatrix_Location, matrix);
 	}
 	
 	public void SetPointLight(PointLight light)

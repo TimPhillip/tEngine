@@ -7,8 +7,6 @@ import de.tEngine.core.Engine;
 
 public class Test extends Engine{
 
-	private LightScene f;
-	
 	public static void main(String[] args) {		
 		Test t = new Test();
 		t.start();		
@@ -21,13 +19,18 @@ public class Test extends Engine{
 	
 	public void start()
 	{
-		f = new LightScene();
-		start(f);
+		setActiveEngine(this);
+		currentScene = new LightScene();
+		start(currentScene);
 	}
 	
 	protected void input()
 	{
-		f.update();		
+			
+	}
+	
+	protected void update(){
+		currentScene.update();
 	}
 
 }

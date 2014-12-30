@@ -20,7 +20,7 @@ public class Renderer {
 	public boolean renderGBuffer = true;
 	
 	private StencilPassShader stencilShader;
-	private DeferredShader deferredShader;
+	private StandardShader deferredShader;
 	private DirectionalLightPassShader dirLightpassShader;
 	private PointLightPassShader pointLightpassShader;
 	private BasicShader basicShader;	
@@ -53,7 +53,7 @@ public class Renderer {
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		
 		basicShader = new BasicShader();
-		deferredShader = new DeferredShader();
+		deferredShader = new StandardShader();
 		dirLightpassShader = new DirectionalLightPassShader();
 		pointLightpassShader = new PointLightPassShader();
 		stencilShader = new StencilPassShader();
@@ -77,17 +77,17 @@ public class Renderer {
 		if(currentScene == null)
 			return;
 		
-		basicShader.start();
+		basicShader.bind();
 		
 		//if there is no camera there is nothing to render
 		if(currentScene.getCamera() == null)
 			return;
 		//Load the matrices for rendering
-		basicShader.SetProjectionMatrix(currentScene.getCamera().getProjectionMatrix());
+		basicShader.SetProjMatrix(currentScene.getCamera().getProjectionMatrix());
 		basicShader.SetViewMatrix(currentScene.getCamera().getViewMatrix());
 		//Render the scene
 		currentScene.render();
-		basicShader.stop();
+		Shader.unbind();
 	}
 	
 	public void deferredRender(){
@@ -95,7 +95,7 @@ public class Renderer {
 		fpsCalculation();
 		//gBuffer.startFrame();
 		//Geometry Pass
-		deferredShader.start();
+		deferredShader.bind();
 		gBuffer.bindForWriting();
 		//Clear the buffers
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -103,12 +103,12 @@ public class Renderer {
 		if(currentScene == null)
 			return;
 		//Load matrices for rendering
-		deferredShader.SetProjectionMatrix(currentScene.getCamera().getProjectionMatrix());
+		deferredShader.SetProjMatrix(currentScene.getCamera().getProjectionMatrix());
 		deferredShader.SetViewMatrix(currentScene.getCamera().getViewMatrix());
 		
 		currentScene.deferredRender();
 		
-		deferredShader.stop();
+		Shader.unbind();
 		
 		//Set openGL states
 		GL11.glDepthMask(false);
@@ -137,9 +137,9 @@ public class Renderer {
 		currentScene.pointLightPass(pointLightpassShader,stencilShader,gBuffer);
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 		//Directional light
-		dirLightpassShader.start();
+		dirLightpassShader.bind();
 		currentScene.dirLightpass(dirLightpassShader);
-		dirLightpassShader.stop();
+		Shader.unbind();
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_CULL_FACE);

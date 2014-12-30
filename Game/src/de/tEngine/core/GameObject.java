@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.tEngine.shaders.BasicShader;
-import de.tEngine.shaders.DeferredShader;
+import de.tEngine.shaders.StandardShader;
 import de.tEngine.components.*;
 /**
  * This class holds an instance of a model placed in the scenery
@@ -71,7 +71,7 @@ public class GameObject {
 		model.renderMultipleInstances();
 	}
 	
-	public void renderDeferred(DeferredShader s){
+	public void renderDeferred(StandardShader s){
 		s.SetWorldMatrix(transform.getToWorldMatrix());
 		model.renderMultipleInstances();
 	}

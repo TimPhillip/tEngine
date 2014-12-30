@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import org.lwjgl.input.Keyboard;
 
-import de.tEngine.core.Camera;
+import de.tEngine.components.Camera;
 import de.tEngine.core.GameObject;
 import de.tEngine.loader.OBJLoader;
 import de.tEngine.math.Quaternion;

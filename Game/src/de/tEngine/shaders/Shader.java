@@ -80,19 +80,19 @@ public abstract class Shader {
 		GL20.glUniform1i(location, value);
 	}
 	
-	public void start()
+	public void bind()
 	{
 		GL20.glUseProgram(programID);
 	}
 	
-	public void stop()
+	public static void unbind()
 	{
 		GL20.glUseProgram(0);
 	}
 	
 	public void CleanUp()
 	{
-		stop();
+		unbind();
 		GL20.glDetachShader(programID, vertexShaderID);
 		GL20.glDeleteShader(vertexShaderID);
 		GL20.glDetachShader(programID, fragmentShaderID);

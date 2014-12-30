@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+import de.tEngine.math.*;
 
 public class SimpleTerrain extends GameObject{
 	
@@ -32,7 +31,7 @@ public class SimpleTerrain extends GameObject{
 			for(int x =0; x < size; x++)
 			{
 				Vertex v = new Vertex(new Vector3f(x * NODE_STEP - (size * NODE_STEP /2),0,z * NODE_STEP - (size * NODE_STEP/2)),new Vector2f(((float)x)/size * 40.0f,((float)z)/size * 40.0f),new Vector3f());
-				v.getPosition().setY(Math.max((float)Math.sin(v.getPosition().getX() * 0.1f),0) *5);
+				v.getPosition().y = Math.max((float)Math.sin(v.getPosition().x * 0.1f),0) *5 ;
 				
 				vertices.add(v);
 				if(x < (size -1) && z < (size-1))

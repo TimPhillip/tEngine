@@ -9,8 +9,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+
+import de.tEngine.math.*;
+import de.tEngine.machine.Machine;
 
 /**
  * This class represents a mesh. A mesh is the geometry data of a 3d model
@@ -138,7 +139,7 @@ public class Mesh {
 		// Store all the normals in slot 2
 		storeDataInVAO(2, 3, normals);
 
-		unbindVAO();
+		unbind();
 	}
 
 	public Mesh(Mesh other) {
@@ -154,10 +155,10 @@ public class Mesh {
 	 */
 	private int createEmptyVAO() {
 		int vaoID = 0;
-		if (OperatingSystem.isWindows()) {
+		if (Machine.getInstance().getOS().isWindows()) {
 			vaoID = GL30.glGenVertexArrays();
 			GL30.glBindVertexArray(vaoID);
-		} else if (OperatingSystem.isMac()) {
+		} else if (Machine.getInstance().getOS().isMac()) {
 			vaoID = APPLEVertexArrayObject.glGenVertexArraysAPPLE();
 			APPLEVertexArrayObject.glBindVertexArrayAPPLE(vaoID);
 		}
@@ -228,14 +229,23 @@ public class Mesh {
 		buf.flip();
 		return buf;
 	}
+	
+	public void bind(){
+		// Bind the mesh data
+		if (Machine.getInstance().getOS().isWindows()) {
+			GL30.glBindVertexArray(this.getVaoID());
+		} else if (Machine.getInstance().getOS().isMac()) {
+			APPLEVertexArrayObject.glBindVertexArrayAPPLE(this.getVaoID());
+		}
+	}
 
 	/**
-	 * Unbind a vertex array object
+	 * Unbind all vertex array objects
 	 */
-	private void unbindVAO() {
-		if (OperatingSystem.isWindows()) {
+	public static void unbind() {
+		if (Machine.getInstance().getOS().isWindows()) {
 			GL30.glBindVertexArray(0);
-		} else if (OperatingSystem.isMac()) {
+		} else if (Machine.getInstance().getOS().isMac()) {
 			APPLEVertexArrayObject.glBindVertexArrayAPPLE(0);
 		}
 	}
@@ -253,7 +263,7 @@ public class Mesh {
 	/**
 	 * Draws the mesh. Before calling the VAO needs to be bind.
 	 */
-	public void drawElements() {
+	public void draw() {
 		GL11.glDrawElements(GL11.GL_TRIANGLES, indexCount,
 				GL11.GL_UNSIGNED_INT, 0);
 	}

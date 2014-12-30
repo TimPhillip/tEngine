@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL20;
 
+import de.tEngine.components.Camera;
 import de.tEngine.components.DirectionalLight;
 import de.tEngine.components.PointLight;
 import de.tEngine.math.Matrix4f;
@@ -31,7 +32,7 @@ public class Scene {
 	protected Color clearColor = Color.green;
 
 	protected BasicShader shader = new BasicShader();
-	protected DeferredShader deferredShader = new DeferredShader();
+	protected StandardShader deferredShader = new StandardShader();
 	protected Camera camera;
 	protected Set<PointLight> lights = new HashSet<PointLight>();
 	protected DirectionalLight dirLight;
@@ -103,6 +104,10 @@ public class Scene {
 			// After draw-call work
 			m.cleanUpMultiRendering();
 		}
+	}
+
+	public HashMap<Model, List<GameObject>> getModelInstancesMap() {
+		return modelInstancesMap;
 	}
 
 	public void deferredRender() {
@@ -179,11 +184,11 @@ public class Scene {
 			GL11.glCullFace(GL11.GL_FRONT);
 			//GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
 			gBuffer.bindForLightingPass();
-			shader.start();
+			shader.bind();
 			shader.SetWorldViewProj(wvp);
 			shader.SetPointLight(p);
 			LightBoundingVolume.sphere.lightPass();
-			shader.stop();
+			shader.unbind();
 		}
 		LightBoundingVolume.sphere.cleanUpLightpass();
 	}

@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import de.tEngine.math.*;
+import de.tEngine.shaders.MaterialShader;
 
 /**
  * A Transform represents a transformation in 3D space. It consists of a position, a rotation and a scale.
@@ -355,5 +356,10 @@ public class Transform {
 		float angle = (float)Math.acos(Vector3f.dot(Vector3f.forward(), lookDir));
 		Vector3f axis = Vector3f.cross(Vector3f.forward(), lookDir);
 		this.rotation = Quaternion.fromAxisAngle(axis, angle);
+	}
+	
+	public void bind(){
+		MaterialShader shader = Engine.getActiveEngine().getRenderer().getBoundMaterialShader();
+		shader.SetWorldMatrix(this.getToWorldMatrix());
 	}
 }

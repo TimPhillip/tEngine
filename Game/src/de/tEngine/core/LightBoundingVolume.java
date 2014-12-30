@@ -8,10 +8,10 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import de.tEngine.loader.*;
+import de.tEngine.machine.Machine;
+import de.tEngine.machine.OperatingSystem;
 
-public class LightBoundingVolume extends Model {
-
-	private static Material boundingVolumeMaterial = new Material();
+public class LightBoundingVolume extends Mesh {
 
 	public static LightBoundingVolume sphere = new LightBoundingVolume(
 			"lightBoundings/sphere.obj");
@@ -21,26 +21,21 @@ public class LightBoundingVolume extends Model {
 	// ...
 
 	private LightBoundingVolume(String filename) {
-		super(OBJLoader.MeshFromFile(filename), boundingVolumeMaterial);
-		boundingVolumeMaterial.setDoubleSided(true);
-		boundingVolumeMaterial.setColor(Color.GREEN);
-		boundingVolumeMaterial.setGlow(true);
-		boundingVolumeMaterial.setWireframe(true);
+		super(OBJLoader.MeshFromFile(filename));
 	}
 
 	public void prepareLightpass() {
-		if (OperatingSystem.isWindows()) {
-			GL30.glBindVertexArray(super.getMesh().getVaoID());
-		} else if (OperatingSystem.isMac()) {
-			APPLEVertexArrayObject.glBindVertexArrayAPPLE(super.getMesh()
-					.getVaoID());
+		if (Machine.getInstance().getOS().isWindows()) {
+			GL30.glBindVertexArray(super.getVaoID());
+		} else if (Machine.getInstance().getOS().isMac()) {
+			APPLEVertexArrayObject.glBindVertexArrayAPPLE(super.getVaoID());
 		}
 		// Enable position data
 		GL20.glEnableVertexAttribArray(0);
 	}
 
 	public void lightPass() {
-		super.getMesh().drawElements();
+		super.draw();
 	}
 
 	public void cleanUpLightpass() {

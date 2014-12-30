@@ -4,7 +4,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import de.tEngine.math.*;
-import de.tEngine.core.Camera;
+import de.tEngine.components.Camera;
 import de.tEngine.core.GameObject;
 import de.tEngine.core.Model;
 import de.tEngine.core.Scene;

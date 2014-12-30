@@ -24,6 +24,6 @@ void main(void)
 	worldNormal = (worldMatrix * vec4(normal,0.0)).xyz;
 	for(int i = 0; i < 20; i++){
 	toLightDir[i] = lightPosition[i] - worldPosition.xyz;
-	lightDistance[i] = toLightDir[i].length();
+	lightDistance[i] = length(toLightDir[i]);
 	}
 }

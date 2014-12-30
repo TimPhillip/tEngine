@@ -7,6 +7,7 @@ import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.newdawn.slick.opengl.TextureLoader;
 
 public class Texture {
@@ -41,6 +42,12 @@ public class Texture {
 			textures[i] = new Texture(buffer.get(i));
 		}
 		return textures;
+	}
+	
+	public void bind(){
+		// Bind the texture
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getId());
 	}
 
 	public int getId() {
