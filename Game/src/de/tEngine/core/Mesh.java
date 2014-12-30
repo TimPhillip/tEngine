@@ -237,6 +237,10 @@ public class Mesh {
 		} else if (Machine.getInstance().getOS().isMac()) {
 			APPLEVertexArrayObject.glBindVertexArrayAPPLE(this.getVaoID());
 		}
+		
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+		GL20.glEnableVertexAttribArray(2);
 	}
 
 	/**
@@ -248,6 +252,10 @@ public class Mesh {
 		} else if (Machine.getInstance().getOS().isMac()) {
 			APPLEVertexArrayObject.glBindVertexArrayAPPLE(0);
 		}
+		
+		GL20.glDisableVertexAttribArray(0);
+		GL20.glDisableVertexAttribArray(1);
+		GL20.glDisableVertexAttribArray(2);
 	}
 
 	/**

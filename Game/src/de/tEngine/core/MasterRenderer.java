@@ -22,9 +22,7 @@ public class MasterRenderer {
 		if(s == null){
 			return;
 		}
-		if(Machine.getInstance().getOS().isMac()){
-			forwardRenderer.render(s);
-		}
+		forwardRenderer.render(s);
 	}
 
 	public MaterialShader getBoundMaterialShader() {

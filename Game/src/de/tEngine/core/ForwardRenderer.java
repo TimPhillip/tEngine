@@ -5,14 +5,20 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 
+import de.tEngine.math.Matrix4f;
+import de.tEngine.shaders.BasicShader;
+import de.tEngine.shaders.Shader;
+
 public class ForwardRenderer {
 
 	// FPS-Counter variables
 	private int frameCount = 0;
 	private long lastTime = 0;
 
+	private BasicShader shader;
+	
 	public void init() {
-
+		shader = new BasicShader();
 	}
 
 	public void render(Scene s) {
@@ -22,6 +28,7 @@ public class ForwardRenderer {
 			if (instances == null || instances.isEmpty())
 				continue;
 			m.bind();
+			s.camera.bind();
 			for (GameObject instance : instances) {
 				instance.getTransform().bind();
 				instance.getModel().getMesh().draw();

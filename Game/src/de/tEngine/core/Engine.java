@@ -12,8 +12,6 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
-import com.sun.prism.PixelFormat;
-
 import de.tEngine.machine.Machine;
 /**
  * The basic Engine class. All applications using tEngine extend this class
