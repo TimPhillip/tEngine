@@ -40,10 +40,10 @@ public class ForwardRenderer {
 	private void initFrame() {
 		// init openGL states
 		GL11.glClearColor(1, 0, 0, 1);
-		/*GL11.glDepthMask(true);
+		GL11.glDepthMask(true);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
-		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);*/
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
 		// Log the current frames per second
 		fpsCalculation();
 		// Clear the screen buffer and the depth buffer

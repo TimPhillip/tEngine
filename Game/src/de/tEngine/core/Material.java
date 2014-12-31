@@ -5,7 +5,7 @@ import java.awt.Color;
 import org.lwjgl.opengl.GL11;
 
 import de.tEngine.shaders.MaterialShader;
-import de.tEngine.shaders.BasicShader;
+import de.tEngine.shaders.StandardShader;
 /**
  * A material represents how an object is rendered.
  * This includes textures but also how light effects the look of an object.
@@ -29,7 +29,7 @@ public class Material {
 	 */
 	public Material()
 	{
-		shader = new BasicShader();
+		shader = new StandardShader();
 		texture = Texture.loadFromFile("white.png");
 		setColor(Color.WHITE);
 		setGlow(false);

@@ -22,7 +22,7 @@ public class MasterRenderer {
 		if(s == null){
 			return;
 		}
-		forwardRenderer.render(s);
+		deferredRenderer.render(s);
 	}
 
 	public MaterialShader getBoundMaterialShader() {
