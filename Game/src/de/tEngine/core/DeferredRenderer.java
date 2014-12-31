@@ -20,10 +20,9 @@ public class DeferredRenderer {
 	}
 
 	public void render(Scene s) {
-		//gBuffer.startFrame();
 		geometryPass(s);
 		if (showGBuffer) {
-			//drawGBufferElements();
+			drawGBufferElements();
 		} else {
 			lightPass(s);
 			finalPass(s);
@@ -31,12 +30,11 @@ public class DeferredRenderer {
 	}
 
 	private void geometryPass(Scene s) {
-		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
-		GL11.glClearColor(1, 0, 0, 1);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		gBuffer.bindForWriting();
+		GL11.glClearColor(0, 1, 0, 1);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		for (Model m : Model.getAllModels()) {
 			List<GameObject> instances = s.getModelInstancesMap().get(m);
 			if (instances == null || instances.isEmpty())
@@ -51,6 +49,9 @@ public class DeferredRenderer {
 	}
 
 	private void drawGBufferElements() {
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
+		GL11.glClearColor(1, 0, 0, 1);
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 		gBuffer.bindForReading();
 		int halfWidth = 1280 / 2;
 		int halfHeight = 720 / 2;
