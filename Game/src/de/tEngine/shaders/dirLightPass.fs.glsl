@@ -22,6 +22,6 @@ void main(void)
 	float k = max(dot(lightDirection * -1,Normal),0);
 	
 	//FragColor = (k + 0.25) * vec4(lightColor,1) * vec4(texture(gBufferDiffuse,TexCoord).xyz,1) * lightIntensity;
-    FragColor = vec4(1,0,0,1);
+    FragColor = vec4(texture(gBufferDiffuse,vec2(0.5,0.5)).xyz,1);
 }
 

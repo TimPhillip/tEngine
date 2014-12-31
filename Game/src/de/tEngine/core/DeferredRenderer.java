@@ -76,17 +76,21 @@ public class DeferredRenderer {
 	private void lightPass(Scene s) {
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
 		GL11.glClearColor(0, 0, 1, 1);
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		//GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		gBuffer.bindForLightingPass();
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT );
 		//directional light
 		dirLightShader.bind();
 		LightBoundingVolume.screenQuad.bind();
 		dirLightShader.SetUpTextureUnits();
 		dirLightShader.SetDirectionalLight(s.dirLight);
 		dirLightShader.SetWorldViewProj(Matrix4f.identity());
-		LightBoundingVolume.screenQuad.draw();
+		//LightBoundingVolume.screenQuad.draw();
 		Shader.unbind();
+		
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	private void finalPass(Scene s) {
