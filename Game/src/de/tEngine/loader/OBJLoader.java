@@ -82,8 +82,8 @@ public class OBJLoader {
 				normal.normalize();
 				//Add it to the vertices normal vector
 				vertices.get(indices.get(i)).setNormal(Vector3f.add(normal, vertices.get(indices.get(i)).getNormal()));
-				Vector3f.add(normal, vertices.get(indices.get(i + 1)).getNormal());
-				Vector3f.add(normal, vertices.get(indices.get(i + 2)).getNormal());
+				vertices.get(indices.get(i + 1)).setNormal(Vector3f.add(normal, vertices.get(indices.get(i + 1)).getNormal()));
+				vertices.get(indices.get(i + 2)).setNormal(Vector3f.add(normal, vertices.get(indices.get(i + 2)).getNormal()));
 			}
 			//normalise all the normal vectors
 			for(int i =0; i< vertices.size(); i++)
