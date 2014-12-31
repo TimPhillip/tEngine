@@ -17,6 +17,6 @@ void main(void)
 	vec4 worldPosition = worldMatrix * vec4(position,1);
 	gl_Position= projectionMatrix * viewMatrix * worldPosition;
 	pass_texCoord = texCoord;
-	worldNormal = (worldMatrix * vec4(normal,0.0)).xyz;
+    worldNormal = (worldMatrix * vec4(normal,0.0)).xyz;
 	worldPos = worldPosition.xyz;
 }

@@ -7,16 +7,20 @@ import org.lwjgl.opengl.GL30;
 
 import de.tEngine.core.GBuffer.GBufferTextureType;
 import de.tEngine.machine.Machine;
+import de.tEngine.math.Matrix4f;
+import de.tEngine.shaders.*;
 
 public class DeferredRenderer {
 
 	private GBuffer gBuffer;
-	private boolean showGBuffer = true;
+	private boolean showGBuffer = false;
+	private DirectionalLightPassShader dirLightShader; 
 
 	public void init() {
 		gBuffer = new GBuffer();
 		gBuffer.init(Machine.getInstance().getWidth(), Machine.getInstance()
 				.getHeight());
+		dirLightShader = new DirectionalLightPassShader();
 	}
 
 	public void render(Scene s) {
@@ -33,7 +37,7 @@ public class DeferredRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		gBuffer.bindForWriting();
-		GL11.glClearColor(0, 1, 0, 1);
+		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		for (Model m : Model.getAllModels()) {
 			List<GameObject> instances = s.getModelInstancesMap().get(m);
@@ -70,7 +74,19 @@ public class DeferredRenderer {
 	}
 
 	private void lightPass(Scene s) {
-
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
+		GL11.glClearColor(0, 0, 1, 1);
+		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		//GL11.glDisable(GL11.GL_DEPTH_TEST);
+		gBuffer.bindForLightingPass();
+		//directional light
+		dirLightShader.bind();
+		LightBoundingVolume.screenQuad.bind();
+		dirLightShader.SetUpTextureUnits();
+		dirLightShader.SetDirectionalLight(s.dirLight);
+		dirLightShader.SetWorldViewProj(Matrix4f.identity());
+		LightBoundingVolume.screenQuad.draw();
+		Shader.unbind();
 	}
 
 	private void finalPass(Scene s) {
