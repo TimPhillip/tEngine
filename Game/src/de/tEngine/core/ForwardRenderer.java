@@ -11,10 +11,6 @@ import de.tEngine.shaders.Shader;
 
 public class ForwardRenderer {
 
-	// FPS-Counter variables
-	private int frameCount = 0;
-	private long lastTime = 0;
-
 	private BasicShader shader;
 	
 	public void init() {
@@ -44,27 +40,12 @@ public class ForwardRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
-		// Log the current frames per second
-		fpsCalculation();
 		// Clear the screen buffer and the depth buffer
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 	}
 
 	private void cleanUpFrame() {
 
-	}
-
-	/**
-	 * Calculates the current frames per second
-	 */
-	private void fpsCalculation() {
-		frameCount++;
-		if (System.nanoTime() - lastTime > 1000000000) {
-			// Log the fps in the console
-			System.out.println(frameCount);
-			lastTime = System.nanoTime();
-			frameCount = 0;
-		}
 	}
 
 }

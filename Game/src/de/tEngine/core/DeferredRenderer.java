@@ -3,8 +3,11 @@ package de.tEngine.core;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
+import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
+import de.tEngine.components.PointLight;
 import de.tEngine.core.GBuffer.GBufferTextureType;
 import de.tEngine.machine.Machine;
 import de.tEngine.math.Matrix4f;
@@ -15,12 +18,14 @@ public class DeferredRenderer {
 	private GBuffer gBuffer;
 	private boolean showGBuffer = false;
 	private DirectionalLightPassShader dirLightShader; 
+	private PointLightPassShader pointLightShader;
 
 	public void init() {
 		gBuffer = new GBuffer();
 		gBuffer.init(Machine.getInstance().getWidth(), Machine.getInstance()
 				.getHeight());
 		dirLightShader = new DirectionalLightPassShader();
+		pointLightShader = new PointLightPassShader();
 	}
 
 	public void render(Scene s) {
@@ -35,6 +40,7 @@ public class DeferredRenderer {
 
 	private void geometryPass(Scene s) {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(true);
 		GL11.glDisable(GL11.GL_BLEND);
 		gBuffer.bindForWriting();
 		GL11.glClearColor(0, 0, 0, 1);
@@ -75,9 +81,14 @@ public class DeferredRenderer {
 
 	private void lightPass(Scene s) {
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
-		GL11.glClearColor(0, 0, 1, 1);
+		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		//Enable blending
+		GL11.glEnable(GL11.GL_BLEND);
+		GL14.glBlendEquation(GL14.GL_FUNC_ADD);
+		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
+		GL11.glDepthMask(false);
 		gBuffer.bindForLightingPass();
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT );
 		//directional light
@@ -86,11 +97,23 @@ public class DeferredRenderer {
 		dirLightShader.SetUpTextureUnits();
 		dirLightShader.SetDirectionalLight(s.dirLight);
 		dirLightShader.SetWorldViewProj(Matrix4f.identity());
-		//LightBoundingVolume.screenQuad.draw();
+		LightBoundingVolume.screenQuad.draw();
 		Shader.unbind();
-		
+		//point lights
+		GL11.glCullFace(GL11.GL_FRONT);
 		GL11.glEnable(GL11.GL_CULL_FACE);
+		LightBoundingVolume.sphere.bind();
+		pointLightShader.bind();
+		Matrix4f viewProj = Matrix4f.mul(s.getCamera().getViewMatrix(), s.getCamera().getProjectionMatrix());
+		for(PointLight p : s.lights){
+			pointLightShader.SetUpTextureUnits();
+			pointLightShader.SetPointLight(p);
+			pointLightShader.SetWorldViewProj(Matrix4f.mul(p.getToWorldMatrix(), viewProj));
+			LightBoundingVolume.sphere.draw();
+		}
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glCullFace(GL11.GL_BACK);
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	private void finalPass(Scene s) {
