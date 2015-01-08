@@ -61,7 +61,7 @@ public class GBuffer {
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, windowWidth,windowHeight, 0, GL11.GL_RGBA, GL11.GL_FLOAT, (ByteBuffer)null);
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-		GL30.glFramebufferTexture2D(GL11.GL_TEXTURE_2D, GL30.GL_COLOR_ATTACHMENT4, GL11.GL_TEXTURE_2D, finalTexture.getId(), 0);
+		GL30.glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT4, GL11.GL_TEXTURE_2D, finalTexture.getId(), 0);
 		
 		
 		drawBuffers = BufferUtils.createIntBuffer(3);

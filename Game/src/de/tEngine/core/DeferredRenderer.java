@@ -16,7 +16,7 @@ import de.tEngine.shaders.*;
 public class DeferredRenderer {
 
 	private GBuffer gBuffer;
-	private boolean showGBuffer = true;
+	private boolean showGBuffer = false;
 	private DirectionalLightPassShader dirLightShader;
 	private PointLightPassShader pointLightShader;
 
@@ -29,7 +29,7 @@ public class DeferredRenderer {
 	}
 
 	public void render(Scene s) {
-		// gBuffer.startFrame();
+		gBuffer.startFrame();
 		geometryPass(s);
 		if (showGBuffer) {
 			drawGBufferElements();
@@ -61,7 +61,7 @@ public class DeferredRenderer {
 
 	private void drawGBufferElements() {
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
-		GL11.glClearColor(0, 1, 0, 1);
+		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 		gBuffer.bindForReading();
 		int halfWidth = 1280 / 2;
@@ -90,6 +90,7 @@ public class DeferredRenderer {
 		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
 		GL11.glDepthMask(false);
 		gBuffer.bindForLightingPass();
+		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		// directional light
 		dirLightShader.bind();
@@ -119,10 +120,12 @@ public class DeferredRenderer {
 	}
 
 	private void finalPass(Scene s) {
+		GL11.glDisable(GL11.GL_DEPTH);
 		gBuffer.bindForFinalPass();
 		GL30.glBlitFramebuffer(0, 0, Machine.getInstance().getWidth(), Machine
 				.getInstance().getHeight(), 0, 0, Machine.getInstance()
 				.getWidth(), Machine.getInstance().getHeight(),
 				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+		GL11.glEnable(GL11.GL_DEPTH);
 	}
 }
