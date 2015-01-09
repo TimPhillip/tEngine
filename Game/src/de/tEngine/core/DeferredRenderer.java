@@ -120,12 +120,12 @@ public class DeferredRenderer {
 	}
 
 	private void finalPass(Scene s) {
-		GL11.glDisable(GL11.GL_DEPTH);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		gBuffer.bindForFinalPass();
 		GL30.glBlitFramebuffer(0, 0, Machine.getInstance().getWidth(), Machine
 				.getInstance().getHeight(), 0, 0, Machine.getInstance()
 				.getWidth(), Machine.getInstance().getHeight(),
 				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
-		GL11.glEnable(GL11.GL_DEPTH);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 }
