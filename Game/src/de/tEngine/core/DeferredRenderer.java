@@ -122,7 +122,7 @@ public class DeferredRenderer {
 
 	private void pointLightPass(Scene s) {
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
-
+		LightBoundingVolume.sphere.bind();
 		Matrix4f viewProj = Matrix4f.mul(s.getCamera().getViewMatrix(), s
 				.getCamera().getProjectionMatrix());
 		for (PointLight p : s.lights) {
@@ -137,7 +137,7 @@ public class DeferredRenderer {
 			GL20.glStencilOpSeparate(GL11.GL_FRONT, GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
 			//Stencil pass
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-			LightBoundingVolume.sphere.bind();
+			
 			Matrix4f wvp = Matrix4f.mul(p.getToWorldMatrix(), viewProj);
 			stencilShader.SetWorldViewProjMatrix(wvp);
 			p.getBoundingVolume().draw();
@@ -149,7 +149,7 @@ public class DeferredRenderer {
 			GL11.glCullFace(GL11.GL_FRONT);
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
-			LightBoundingVolume.sphere.bind();
+			
 			pointLightShader.bind();
 			//light pass
 			pointLightShader.SetUpTextureUnits();

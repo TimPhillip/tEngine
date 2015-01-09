@@ -38,12 +38,13 @@ public class LightScene extends Scene {
 		cube = new GameObject(OBJLoader.ModelFromFile("haus.obj", "haus.png"));
 		super.addGameObject(cube);
 		cube.getTransform().setPosition(new Vector3f(0,0,-5));
-		
+		for(int i =0; i < 200; i++){
 		GameObject l = new GameObject(null);
-		l.getTransform().setPosition(new Vector3f(0,0.5f,0));
+		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
 		l.addComponent(new PointLight());
 		lights.add(l.getComponent(PointLight.class));
 		super.addGameObject(l);
+		}
 		dirLight = new DirectionalLight();
 	}
 
