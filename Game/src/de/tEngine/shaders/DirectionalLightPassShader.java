@@ -14,9 +14,11 @@ public class DirectionalLightPassShader extends Shader {
 	private int lightDirection_Location;
 	private int lightColor_Location;
 	private int lightIntensity_Location;
+	private int lightViewProj_Location;
 	private int gPosition_Location;
 	private int gDiffuse_Location;
 	private int gNormal_Location;
+	private int shadowMap_Location;
 	
 	public DirectionalLightPassShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -36,6 +38,8 @@ public class DirectionalLightPassShader extends Shader {
 		gDiffuse_Location = super.GetUniformLocation("gBufferDiffuse");
 		gNormal_Location = super.GetUniformLocation("gBufferNormal");
 		lightIntensity_Location = super.GetUniformLocation("lightIntensity");
+		lightViewProj_Location = super.GetUniformLocation("lightViewProj");
+		shadowMap_Location = super.GetUniformLocation("shadowMap");
 	}
 	
 	public void SetWorldViewProj(Matrix4f wvp){
@@ -47,12 +51,15 @@ public class DirectionalLightPassShader extends Shader {
 		super.SetUniformFloat(lightIntensity_Location, light.getIntensity());
 		Vector3f color = new Vector3f(light.getColor().getRed() / 255.0f,light.getColor().getGreen() / 255.0f,light.getColor().getBlue() / 255.0f);
 		super.SetUniformVector3f(lightColor_Location, color);
+		Matrix4f vp = Matrix4f.mul(light.getLightViewMatrix(),light.getLightProjMatrix());
+		super.SetUniformMatrix4f(lightViewProj_Location, vp);
 	}
 	
 	public void SetUpTextureUnits(){
 		super.SetUniformInteger(gPosition_Location, 0);
 		super.SetUniformInteger(gDiffuse_Location, 1);
 		super.SetUniformInteger(gNormal_Location, 2);
+		super.SetUniformInteger(shadowMap_Location, 3);
 	}
 
 }

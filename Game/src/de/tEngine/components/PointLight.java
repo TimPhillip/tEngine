@@ -23,7 +23,7 @@ public class PointLight extends Component {
 	{
 		this.setColor(color);
 		boundingVolume = LightBoundingVolume.sphere;
-		range = 5.0f;
+		range = 30.0f;
 		intensity = 1.5f;
 		attenuation = new Vector3f(1.0f,0.1f,0.1f);
 	}

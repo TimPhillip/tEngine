@@ -109,7 +109,7 @@ public class OBJLoader {
 	
 	public static Model ModelFromFile(String filename, String textureFile){
 		Mesh mesh = MeshFromFile(filename);
-		Model model = new Model(mesh,Texture.loadFromFile(textureFile));
+		Model model = new Model(mesh,Texture.loadFromFile(textureFile,true));
 		return model;
 	}
 

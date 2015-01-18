@@ -2,6 +2,7 @@ package de.tEngine.components;
 
 import java.awt.Color;
 
+import de.tEngine.math.Matrix4f;
 import de.tEngine.math.Vector3f;
 
 public class DirectionalLight extends Component {
@@ -11,7 +12,7 @@ public class DirectionalLight extends Component {
 	
 	public DirectionalLight(){
 		direction = new Vector3f(0,-1f,-1);
-		intensity = 1.0f;
+		intensity = 1.3f;
 		color = color.white;
 	}
 
@@ -33,7 +34,7 @@ public class DirectionalLight extends Component {
 	 * @return the direction
 	 */
 	public Vector3f getDirection() {
-		return direction;
+		return transform.forward();
 	}
 
 	/**
@@ -55,5 +56,21 @@ public class DirectionalLight extends Component {
 	 */
 	public void setIntensity(float intensity) {
 		this.intensity = intensity;
+	}
+	
+	/**
+	 * Returns the light view Matrix of the light.
+	 * @return The view matrix
+	 */
+	public Matrix4f getLightViewMatrix() {
+		Matrix4f rot = Matrix4f.rotationMatrix(transform.getRotation());
+		rot.invert();
+		return Matrix4f.mul(Matrix4f.translationMatrix(transform.getPosition()
+				.getNegated()), rot);
+	}
+	
+	public Matrix4f getLightProjMatrix(){
+		return Matrix4f.orthoProjectionMatrix(-60,
+				60, -60, 60, -40.0f, 40.0f);
 	}
 }
