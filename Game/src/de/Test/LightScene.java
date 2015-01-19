@@ -48,7 +48,7 @@ public class LightScene extends Scene {
 	}
 
 	public void update() {
-		if (timer > 50) {
+		if (timer > 100) {
 			for (PointLight p : lights) {
 				p.setColor(new Color((int) (Math.random() * 255),
 						(int) (Math.random() * 255),
