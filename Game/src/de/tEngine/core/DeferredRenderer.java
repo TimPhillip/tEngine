@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL30;
 
 import de.tEngine.components.PointLight;
 import de.tEngine.core.GBuffer.GBufferTextureType;
+import de.tEngine.gui.TexturePane;
 import de.tEngine.machine.Machine;
 import de.tEngine.math.Matrix4f;
 import de.tEngine.shaders.*;
@@ -20,9 +21,15 @@ public class DeferredRenderer {
 
 	private GBuffer gBuffer;
 	private boolean showGBuffer = false;
+	private boolean showShadowMap = false;
+
 	private DirectionalLightPassShader dirLightShader;
 	private PointLightPassShader pointLightShader;
 	private StencilPassShader stencilShader;
+	private ShadowMapShader shadowMapShader;
+
+	private ShadowMap shadowMap;
+	private TexturePane shadowDepth;
 
 	public void init() {
 		gBuffer = new GBuffer();
@@ -31,6 +38,10 @@ public class DeferredRenderer {
 		dirLightShader = new DirectionalLightPassShader();
 		pointLightShader = new PointLightPassShader();
 		stencilShader = new StencilPassShader();
+		shadowMapShader = new ShadowMapShader();
+
+		shadowMap = new ShadowMap(1280, 720);
+		shadowDepth = new TexturePane();
 	}
 
 	public void render(Scene s) {
@@ -48,10 +59,13 @@ public class DeferredRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(true);
 		GL11.glDisable(GL11.GL_BLEND);
+		shadowMap.bindForWriting();
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 		gBuffer.bindForWriting();
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 		for (Model m : Model.getAllModels()) {
+			gBuffer.bindForWriting();
 			List<GameObject> instances = s.getModelInstancesMap().get(m);
 			if (instances == null || instances.isEmpty())
 				continue;
@@ -61,6 +75,21 @@ public class DeferredRenderer {
 				instance.getTransform().bind();
 				instance.getModel().getMesh().draw();
 			}
+			// Shadow Mapping
+			shadowMap.bindForWriting();
+			shadowMapShader.bind();
+			shadowMapShader.setLightView(s.dirLight.getLightViewMatrix());
+			shadowMapShader.setLightProj(s.dirLight.getLightProjMatrix());
+			// shadowMapShader.setLightProj(s.camera.getProjectionMatrix());
+			m.getMesh().bind();
+			//GL11.glCullFace(GL11.GL_FRONT);
+			for (GameObject instance : instances) {
+				shadowMapShader.setWorldMatrix(instance.transform
+						.getToWorldMatrix());
+				instance.getModel().getMesh().draw();
+			}
+			//GL11.glCullFace(GL11.GL_BACK);
+			Shader.unbind();
 		}
 	}
 
@@ -86,25 +115,25 @@ public class DeferredRenderer {
 	}
 
 	private void lightPass(Scene s) {
-		//Set up light pass
+		// Set up light pass
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		enableBlending();
 		GL11.glDepthMask(false);
 		gBuffer.bindForLightingPass();
-		
+
 		pointLightPass(s);
 		directionalLightPass(s);
-		
-		//Clean up light pass
+
+		// Clean up light pass
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glCullFace(GL11.GL_BACK);
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-	
-	private void enableBlending(){
+
+	private void enableBlending() {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL14.glBlendEquation(GL14.GL_FUNC_ADD);
 		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
@@ -116,49 +145,52 @@ public class DeferredRenderer {
 		dirLightShader.SetUpTextureUnits();
 		dirLightShader.SetDirectionalLight(s.dirLight);
 		dirLightShader.SetWorldViewProj(Matrix4f.identity());
+		shadowMap.bindForReading(3);
 		LightBoundingVolume.screenQuad.draw();
 		Shader.unbind();
 	}
 
 	private void pointLightPass(Scene s) {
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
-
+		LightBoundingVolume.sphere.bind();
 		Matrix4f viewProj = Matrix4f.mul(s.getCamera().getViewMatrix(), s
 				.getCamera().getProjectionMatrix());
 		for (PointLight p : s.lights) {
-			//Set up stencil pass
+			// Set up stencil pass
 			stencilShader.bind();
 			gBuffer.bindForStencilPass();
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			GL11.glDisable(GL11.GL_BLEND);
 			GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0);
-			GL20.glStencilOpSeparate(GL11.GL_BACK, GL11.GL_KEEP, GL14.GL_INCR_WRAP, GL11.GL_KEEP);
-			GL20.glStencilOpSeparate(GL11.GL_FRONT, GL11.GL_KEEP, GL14.GL_DECR_WRAP, GL11.GL_KEEP);
-			//Stencil pass
+			GL20.glStencilOpSeparate(GL11.GL_BACK, GL11.GL_KEEP,
+					GL14.GL_INCR_WRAP, GL11.GL_KEEP);
+			GL20.glStencilOpSeparate(GL11.GL_FRONT, GL11.GL_KEEP,
+					GL14.GL_DECR_WRAP, GL11.GL_KEEP);
+			// Stencil pass
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-			LightBoundingVolume.sphere.bind();
+
 			Matrix4f wvp = Matrix4f.mul(p.getToWorldMatrix(), viewProj);
 			stencilShader.SetWorldViewProjMatrix(wvp);
 			p.getBoundingVolume().draw();
 			Shader.unbind();
-			//Set up light pass
+			// Set up light pass
 			gBuffer.bindForLightingPass();
 			enableBlending();
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 			GL11.glCullFace(GL11.GL_FRONT);
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glStencilFunc(GL11.GL_NOTEQUAL, 0, 0xFF);
-			LightBoundingVolume.sphere.bind();
+
 			pointLightShader.bind();
-			//light pass
+			// light pass
 			pointLightShader.SetUpTextureUnits();
 			pointLightShader.SetPointLight(p);
 			pointLightShader.SetWorldViewProj(Matrix4f.mul(
 					p.getToWorldMatrix(), viewProj));
 			LightBoundingVolume.sphere.draw();
 		}
-		
+
 		GL11.glDisable(GL11.GL_STENCIL_TEST);
 	}
 
@@ -169,6 +201,14 @@ public class DeferredRenderer {
 				.getInstance().getHeight(), 0, 0, Machine.getInstance()
 				.getWidth(), Machine.getInstance().getHeight(),
 				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+		// Draw GUIs
+		if (showShadowMap) {
+			GL11.glDisable(GL11.GL_CULL_FACE);
+			shadowMap.bindForReading(0);
+			shadowDepth.draw();
+			GL11.glEnable(GL11.GL_CULL_FACE);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+		}
 	}
 }

@@ -464,4 +464,26 @@ public class Matrix4f {
 			}
 		}
 	}
+	
+	/**
+	 * Returns a orthographic projection matrix.
+	 * @param left Left
+	 * @param right Right
+	 * @param bottom Bottom
+	 * @param top Top
+	 * @param near Near-Plane
+	 * @param far Far-Plane
+	 * @return The orthographic projection matrix
+	 */
+	public static Matrix4f orthoProjectionMatrix(float left,float right,float bottom,float top,float near, float far){
+		Matrix4f ortho = new Matrix4f();
+		ortho.m[0][0] = 2.0f/(right - left);
+		ortho.m[0][3] = -1.0f * (right + left)/(right - left);
+		ortho.m[1][1] = 2.0f /(top - bottom);
+		ortho.m[1][3] = -1.0f * (top + bottom)/(top -bottom);
+		ortho.m[2][2] = -2.0f/(far - near);
+		ortho.m[2][3] = -1.0f * (far + near)/(far -near);
+		ortho.m[3][3] = 1.0f;
+		return ortho.getTranspose();
+	}
 }

@@ -89,7 +89,7 @@ public class Camera extends Component {
 			projectionMatrix.m[3][2] = -((2 * nearPlane * farPlane) / frustum_length);
 			projectionMatrix.m[3][3] = 0;
 		}else if (projectionType == ProjectionType.Orthographic){
-			throw new UnsupportedOperationException();
+			return Matrix4f.orthoProjectionMatrix(-20,20, -20,20,nearPlane, farPlane);
 		}
 		return projectionMatrix;
 	}
