@@ -31,7 +31,7 @@ void main(void)
 	
 	LightCoords = LightCoords * 0.5f + vec3(0.5f);
 	float Depth = texture(shadowMap,LightCoords.xy).x;
-	if(Depth < (LightCoords.z)){
+	if(Depth < (LightCoords.z - 1.0f / 1024)){
 		shadowFactor = 0.5f;
 	}
 	

@@ -48,11 +48,33 @@ public class MatrixMathTest {
 	
 	@Test
 	public void matrixMultiplicationTest() {
+		Matrix4f a = new Matrix4f(new float[][]{
+				{1,2,3,4},
+				{1,2,3,4},
+				{1,2,3,4},
+				{1,2,3,4}
+		});
+		
+		Matrix4f b = new Matrix4f(new float[][]{
+				{4,3,2,1},
+				{4,3,2,1},
+				{4,3,2,1},
+				{4,3,2,1}
+		});
+		
+		Matrix4f c = new Matrix4f(new float[][]{
+				{40,30,20,10},
+				{40,30,20,10},
+				{40,30,20,10},
+				{40,30,20,10}
+		});
+		
 		Matrix4f result1 = Matrix4f.mul(matrix, Matrix4f.identity());
 		Matrix4f result2 = Matrix4f.mul(Matrix4f.identity(),matrix);
-		
+		Matrix4f result3 = Matrix4f.mul(a, b);
 		assertEquals(matrix,result1);
 		assertEquals(matrix,result2);
+		assertEquals(c,result3);
 	}
 	
 	@Test
