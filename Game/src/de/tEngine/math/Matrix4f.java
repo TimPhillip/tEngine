@@ -426,11 +426,13 @@ public class Matrix4f {
 	public static Matrix4f rotationMatrix(Quaternion rotation){
 		Quaternion q = rotation;
 		//Formula from Frank D. Luna's book page 750
-		return new Matrix4f(new float[][]{
+	 Matrix4f result =  new Matrix4f(new float[][]{
 				{1 - 2 * q.y*q.y - 2* q.z*q.z , 2*q.x*q.y + 2*q.z*q.w , 2*q.x*q.z - 2*q.y*q.w , 0},
 				{2*q.x*q.y - 2*q.z*q.w , 1 - 2*q.x*q.x - 2*q.z*q.z , 2*q.y*q.z + 2*q.x*q.w , 0},
 				{2*q.x*q.z + 2*q.y*q.w , 2*q.y*q.z - 2*q.x*q.w , 1 - 2*q.x*q.x - 2*q.y*q.y , 0},
 				{0 , 0 , 0 , 1}});
+	 result.transpose();
+		return result;
 	}
 	
 	/**
