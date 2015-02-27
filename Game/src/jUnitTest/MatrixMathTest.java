@@ -199,7 +199,9 @@ public class MatrixMathTest {
 		result = transM.transform(result.toHomogeneousCoordVector()).toVector3f();
 		assertTrue(result.equals(new Vector3f(0,0,0), 0.00001f));
 	}
-	
+	/**
+	 * TODO: Quaternion rotations to rotation matrx
+	 */
 	@Test
 	public void quaternionRotationMatrixTest(){
 		Quaternion q = Quaternion.fromEulerRotation(new Vector3f((float)Math.toRadians(90),(float)Math.toRadians(90),0));
