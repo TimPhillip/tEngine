@@ -14,7 +14,7 @@ public class Test extends Engine{
 	
 	public Test()
 	{
-		super(1280,720);
+		super();
 	}
 	
 	public void start()

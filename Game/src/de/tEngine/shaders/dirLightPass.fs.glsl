@@ -10,12 +10,13 @@ uniform mat4 lightViewProj;
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform float lightIntensity;
+uniform vec2 screenSize;
 
 out vec4 FragColor;
 
 vec2 CalcTexCoord()
 {
-	return gl_FragCoord.xy / vec2(1280,720);
+	return gl_FragCoord.xy / screenSize;
 }
 
 void main(void)
@@ -31,7 +32,7 @@ void main(void)
 	
 	LightCoords = LightCoords * 0.5f + vec3(0.5f);
 	float Depth = texture(shadowMap,LightCoords.xy).x;
-	if(Depth < (LightCoords.z)){
+	if(Depth < (LightCoords.z - 1.0f / 1024)){
 		shadowFactor = 0.5f;
 	}
 	

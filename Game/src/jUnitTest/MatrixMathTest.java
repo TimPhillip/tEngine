@@ -26,10 +26,10 @@ public class MatrixMathTest {
 		});
 		
 		transformationMatrix = new Matrix4f(new float[][]{
-				{1,0,0,0},
-				{0,1,0,0},
+				{1,0,0,12},
+				{0,1,0,-10},
 				{0,0,1,0},
-				{12,-10,0,1}
+				{0,0,0,1}
 		});
 		
 		detMatrix = new Matrix4f(new float[][]{
@@ -42,17 +42,55 @@ public class MatrixMathTest {
 	}
 	
 	@Test
+	public void storeTest(){
+		//Check if the first component is the row and the second the column
+		assertEquals(matrix.m[3][1],0,0.0f);
+		assertEquals(matrix.m[1][0],4,0.0f);
+	}
+	
+	@Test
 	public void equalsTest(){
 		assertEquals(matrix,matrix);
 	}
 	
 	@Test
 	public void matrixMultiplicationTest() {
+		Matrix4f a = new Matrix4f(new float[][]{
+				{1,2,3,4},
+				{1,2,3,4},
+				{1,2,3,4},
+				{1,2,3,4}
+		});
+		
+		Matrix4f b = new Matrix4f(new float[][]{
+				{4,3,2,1},
+				{4,3,2,1},
+				{4,3,2,1},
+				{4,3,2,1}
+		});
+		
+		Matrix4f c = new Matrix4f(new float[][]{
+				{40,30,20,10},
+				{40,30,20,10},
+				{40,30,20,10},
+				{40,30,20,10}
+		});
+		
+		Matrix4f d = new Matrix4f(new float[][]{
+				{10,20,30,40},
+				{10,20,30,40},
+				{10,20,30,40},
+				{10,20,30,40}
+		});
+		
 		Matrix4f result1 = Matrix4f.mul(matrix, Matrix4f.identity());
 		Matrix4f result2 = Matrix4f.mul(Matrix4f.identity(),matrix);
-		
+		Matrix4f result3 = Matrix4f.mul(a, b);
+		Matrix4f result4 = Matrix4f.mul(b, a);
 		assertEquals(matrix,result1);
 		assertEquals(matrix,result2);
+		assertEquals(c,result3);
+		assertEquals(d,result4);
 	}
 	
 	@Test
@@ -128,7 +166,13 @@ public class MatrixMathTest {
 	public void rotationMatrixTest(){
 		Matrix4f rotM = Matrix4f.rotationMatrix(new Vector3f(0,1,0),(float)Math.toRadians(90));
 		Vector3f result = rotM.transform(new Vector3f(0,0,1).toHomogeneousCoordPoint()).toVector3f();
-		assertTrue(result.equals(new Vector3f(1,0,0), 0.00001f));
+		assertTrue(result.equals(new Vector3f(-1,0,0), 0.00001f));
+		result = rotM.getTranspose().transform(result.toHomogeneousCoordPoint()).toVector3f();
+		assertTrue(result.equals(new Vector3f(0,0,1), 0.00001f));
+		
+		rotM = Matrix4f.rotationMatrix(new Vector3f(0,1,0),(float)Math.toRadians(180));
+		result = rotM.transform(new Vector3f(0,0,1).toHomogeneousCoordPoint()).toVector3f();
+		assertTrue(result.equals(new Vector3f(0,0,-1), 0.00001f));
 		result = rotM.getTranspose().transform(result.toHomogeneousCoordPoint()).toVector3f();
 		assertTrue(result.equals(new Vector3f(0,0,1), 0.00001f));
 	}
@@ -137,6 +181,7 @@ public class MatrixMathTest {
 	public void eulerRotationMatrixTest(){
 		Matrix4f rotM = Matrix4f.rotationMatrix(new Vector3f((float)Math.toRadians(90),(float)Math.toRadians(90),0));
 		Vector3f result = rotM.transform(new Vector3f(-1,0,0).toHomogeneousCoordVector()).toVector3f();
+		System.out.println("Euler: " + result);
 		assertTrue(result.equals(new Vector3f(0,-1,0), 0.00001f));
 		result = rotM.getInverse().transform(result.toHomogeneousCoordVector()).toVector3f();
 		assertTrue(result.equals(new Vector3f(-1,0,0), 0.00001f));
@@ -158,7 +203,6 @@ public class MatrixMathTest {
 		Matrix4f rotM = Matrix4f.rotationMatrix(q);
 		Vector3f vec = new Vector3f(-1,0,0);
 		vec = rotM.transform(vec.toHomogeneousCoordVector()).toVector3f();
-		assertTrue(vec.equals(new Vector3f(0,-1,0), 0.00001f));
-		System.out.println(vec);
+		assertTrue(vec.equals(new Vector3f(0,0,1), 0.00001f));
 	}
 }

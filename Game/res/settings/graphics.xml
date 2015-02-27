@@ -1,0 +1,8 @@
+<graphics>
+	<resolution>
+		<width>500</width>
+		<height>720</height>
+		<frames>max</frames>
+		<fullscreen>false</fullscreen>
+	</resolution>
+</graphics>

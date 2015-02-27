@@ -49,12 +49,38 @@ public class QuaternionMathTest {
 	
 	@Test
 	public void rotationAxisTest(){
+		//******************************************************
+		//Right rotation directions
+		//https://www.evl.uic.edu/ralph/508S98/coordinates.html
+		//******************************************************
+		
+		//Y-Axis
 		Quaternion rot = Quaternion.fromAxisAngle(new Vector3f(0,1,0), (float)Math.toRadians(90));
 		Vector3f vec = new Vector3f(0,0,-1);
 		Vector3f result = rot.rotate(vec);
 		assertTrue(result.equals(new Vector3f(-1,0,0), 0.00001f));
 		result = rot.rotate(result);
 		assertTrue(result.equals(new Vector3f(0,0,1), 0.00001f));
+		result = rot.rotate(result);
+		assertTrue(result.equals(new Vector3f(1,0,0), 0.00001f));
+		
+		//X-Axis
+		rot = Quaternion.fromAxisAngle(new Vector3f(1,0,0), (float)Math.toRadians(90));
+		vec = new Vector3f(0,0,-1);
+		result = rot.rotate(vec);
+		assertTrue(result.equals(new Vector3f(0,1,0), 0.00001f));
+		result = rot.rotate(result);
+		assertTrue(result.equals(new Vector3f(0,0,1), 0.00001f));
+		result = rot.rotate(result);
+		assertTrue(result.equals(new Vector3f(0,-1,0), 0.00001f));
+		
+		//Z-Axis
+		rot = Quaternion.fromAxisAngle(new Vector3f(0,0,1), (float)Math.toRadians(90));
+		vec = new Vector3f(0,1,0);
+		result = rot.rotate(vec);
+		assertTrue(result.equals(new Vector3f(-1,0,0), 0.00001f));
+		result = rot.rotate(result);
+		assertTrue(result.equals(new Vector3f(0,-1,0), 0.00001f));
 		result = rot.rotate(result);
 		assertTrue(result.equals(new Vector3f(1,0,0), 0.00001f));
 	}
@@ -64,7 +90,7 @@ public class QuaternionMathTest {
 		Quaternion rot = Quaternion.fromEulerRotation(new Vector3f((float)Math.toRadians(90),(float)Math.toRadians(90),0));
 		Vector3f vec = new Vector3f(-1,0,0);
 		vec = rot.rotate(vec);
-		assertTrue(vec.equals(new Vector3f(0,-1,0), 0.00001f));
+		assertTrue(vec.equals(new Vector3f(0,0,1), 0.00001f));
 		vec = rot.getInverse().rotate(vec);
 		assertTrue(vec.equals(new Vector3f(-1,0,0), 0.00001f));
 	}

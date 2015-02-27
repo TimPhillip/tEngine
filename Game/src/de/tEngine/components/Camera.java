@@ -2,6 +2,7 @@ package de.tEngine.components;
 
 import de.tEngine.core.Engine;
 import de.tEngine.core.GameObject;
+import de.tEngine.machine.Machine;
 import de.tEngine.math.*;
 import de.tEngine.shaders.BasicShader;
 import de.tEngine.shaders.MaterialShader;
@@ -14,15 +15,23 @@ public class Camera extends Component {
 	private int width, height;
 	private Matrix4f projectionMatrix;
 	private ProjectionType projectionType;
-	
 
 	/**
 	 * The Projection types of a camera to choose.
+	 * 
 	 * @author Tim Schneider
 	 */
 	public enum ProjectionType {
 		Perspective, Orthographic
 	};
+
+	/**
+	 * Creates a new camera with screen size dimensions.
+	 */
+	public Camera() {
+		this(Machine.getInstance().getWidth(), Machine.getInstance()
+				.getHeight(), 0.1f, 1000.0f, 70);
+	}
 
 	/**
 	 * Creates a new Camera
@@ -70,8 +79,9 @@ public class Camera extends Component {
 	}
 
 	/**
-	 * Returns the projection Matrix of this camera.
-	 * It depends on the chosen projection type of the camera.
+	 * Returns the projection Matrix of this camera. It depends on the chosen
+	 * projection type of the camera.
+	 * 
 	 * @return The projection matrix
 	 */
 	public Matrix4f getProjectionMatrix() {
@@ -88,14 +98,18 @@ public class Camera extends Component {
 			projectionMatrix.m[2][3] = -1;
 			projectionMatrix.m[3][2] = -((2 * nearPlane * farPlane) / frustum_length);
 			projectionMatrix.m[3][3] = 0;
-		}else if (projectionType == ProjectionType.Orthographic){
-			return Matrix4f.orthoProjectionMatrix(-20,20, -20,20,nearPlane, farPlane);
+		} else if (projectionType == ProjectionType.Orthographic) {
+			float aspectRatio = width / height;
+			aspectRatio = 1.0f;
+			return Matrix4f.orthoProjectionMatrix(-aspectRatio *20,aspectRatio * 20, -20, 20, nearPlane,
+					farPlane);
 		}
 		return projectionMatrix;
 	}
 
 	/**
 	 * Returns the view Matrix of the camera.
+	 * 
 	 * @return The view matrix
 	 */
 	public Matrix4f getViewMatrix() {
@@ -110,7 +124,8 @@ public class Camera extends Component {
 		Vector3f dest = new Vector3f();
 		dest = Vector3f.sub(transform.getPosition(), go.getTransform()
 				.getPosition());
-		return dest.length() < (100 + go.getModel().getMesh().getCullingRadius());
+		return dest.length() < (100 + go.getModel().getMesh()
+				.getCullingRadius());
 	}
 
 	public ProjectionType getProjectionType() {
@@ -120,9 +135,10 @@ public class Camera extends Component {
 	public void setProjectionType(ProjectionType projectionType) {
 		this.projectionType = projectionType;
 	}
-	
-	public void bind(){
-		MaterialShader shader = Engine.getActiveEngine().getRenderer().getBoundMaterialShader();
+
+	public void bind() {
+		MaterialShader shader = Engine.getActiveEngine().getRenderer()
+				.getBoundMaterialShader();
 		shader.SetViewMatrix(this.getViewMatrix());
 		shader.SetProjMatrix(this.getProjectionMatrix());
 	}

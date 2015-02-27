@@ -189,10 +189,10 @@ public class Matrix4f {
 	 */
 	public Vector4f transform(Vector4f vector){
 		Vector4f result = new Vector4f();
-		result.x = m[0][0] * vector.x + m[1][0] * vector.y + m[2][0] * vector.z + m[3][0] * vector.w;
-		result.y = m[0][1] * vector.x + m[1][1] * vector.y + m[2][1] * vector.z + m[3][1] * vector.w;
-		result.z = m[0][2] * vector.x + m[1][2] * vector.y + m[2][2] * vector.z + m[3][2] * vector.w;
-		result.w = m[0][3] * vector.x + m[1][3] * vector.y + m[2][3] * vector.z + m[3][3] * vector.w;
+		result.x = m[0][0] * vector.x + m[0][1] * vector.y + m[0][2] * vector.z + m[0][3] * vector.w;
+		result.y = m[1][0] * vector.x + m[1][1] * vector.y + m[1][2] * vector.z + m[1][3] * vector.w;
+		result.z = m[2][0] * vector.x + m[2][1] * vector.y + m[2][2] * vector.z + m[2][3] * vector.w;
+		result.w = m[3][0] * vector.x + m[3][1] * vector.y + m[3][2] * vector.z + m[3][3] * vector.w;
 		return result;
 	}
 	
@@ -391,15 +391,16 @@ public class Matrix4f {
 	 */
 	public static Matrix4f rotationMatrix(Vector3f axis,float angle){
 		Matrix4f result;
-		//Formula from Frank D. Luna's book page 65
 		axis.normalize();
 		float c = (float)Math.cos(angle);
 		float s = (float)Math.sin(angle);
+		float t = 1 - c;
 		result = new Matrix4f(new float[][]{
-				{c + (1 -c) * axis.x * axis.x , (1 - c) * axis.x * axis.y + s * axis.z , (1-c) * axis.x * axis.z - s * axis.y , 0},
-				{(1- c) * axis.x * axis.y - s *axis.z , c + (1-c) * axis.y * axis.y , (1-c) * axis.y * axis.z + s * axis.x , 0},
-				{(1 -c) * axis.x * axis.z + s *axis.y , (1 -c) * axis.y * axis.z - s *axis.x , c +(1-c) * axis.z * axis.z , 0},
-				{0, 0, 0, 1}});
+				{t * axis.x * axis.x + c , t * axis.x * axis.y + s * axis.z, t * axis.x * axis.z - s * axis.y,0},
+				{t * axis.x * axis.y - s * axis.z, t * axis.y * axis.y + c, t * axis.y * axis.z + s * axis.x,0},
+				{t * axis.x * axis.z + s * axis.y, t * axis.y * axis.z - s * axis.x, t * axis.z * axis.z + c,0},
+				{0, 0, 0, 1}
+		});
 		return result;
 	}
 	
@@ -413,12 +414,12 @@ public class Matrix4f {
 	 * @return The rotation matrix
 	 */
 	public static Matrix4f rotationMatrix(Vector3f euler){
-		//Yaw
-		Matrix4f rotM = Matrix4f.rotationMatrix(new Vector3f(0,1,0),euler.y);
+		//Roll
+		Matrix4f rotM = Matrix4f.rotationMatrix(new Vector3f(0,0,1),euler.z);
 		//Pitch
 		rotM.mul(Matrix4f.rotationMatrix(new Vector3f(1,0,0), euler.x));
-		//Roll
-		rotM.mul(Matrix4f.rotationMatrix(new Vector3f(0,0,1), euler.z));	
+		//Yaw
+		rotM.mul(Matrix4f.rotationMatrix(new Vector3f(0,1,0), euler.y));	
 		return rotM;				
 	}
 	
@@ -439,17 +440,17 @@ public class Matrix4f {
 	 */
 	public static Matrix4f translationMatrix(Vector3f translation){
 		Matrix4f result = Matrix4f.identity();
-		result.m[3][0] = translation.x;
-		result.m[3][1] = translation.y;
-		result.m[3][2] = translation.z;
+		result.m[0][3] = translation.x;
+		result.m[1][3] = translation.y;
+		result.m[2][3] = translation.z;
 		return result;
 	}
 	
 	public Vector3f decomposeTranslation(){
 		Vector3f translation = new Vector3f();
-		translation.x = m[3][0];
-		translation.y = m[3][1];
-		translation.z = m[3][2];
+		translation.x = m[0][3];
+		translation.y = m[1][3];
+		translation.z = m[2][3];
 		return translation;
 	}
 	

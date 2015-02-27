@@ -40,7 +40,7 @@ public class DeferredRenderer {
 		stencilShader = new StencilPassShader();
 		shadowMapShader = new ShadowMapShader();
 
-		shadowMap = new ShadowMap(1280, 720);
+		shadowMap = new ShadowMap(1280,720);
 		shadowDepth = new TexturePane();
 	}
 
@@ -82,13 +82,13 @@ public class DeferredRenderer {
 			shadowMapShader.setLightProj(s.dirLight.getLightProjMatrix());
 			// shadowMapShader.setLightProj(s.camera.getProjectionMatrix());
 			m.getMesh().bind();
-			//GL11.glCullFace(GL11.GL_FRONT);
+			// GL11.glCullFace(GL11.GL_FRONT);
 			for (GameObject instance : instances) {
 				shadowMapShader.setWorldMatrix(instance.transform
 						.getToWorldMatrix());
 				instance.getModel().getMesh().draw();
 			}
-			//GL11.glCullFace(GL11.GL_BACK);
+			// GL11.glCullFace(GL11.GL_BACK);
 			Shader.unbind();
 		}
 	}
@@ -142,6 +142,7 @@ public class DeferredRenderer {
 	private void directionalLightPass(Scene s) {
 		dirLightShader.bind();
 		LightBoundingVolume.screenQuad.bind();
+		dirLightShader.SetScreenSize(Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
 		dirLightShader.SetUpTextureUnits();
 		dirLightShader.SetDirectionalLight(s.dirLight);
 		dirLightShader.SetWorldViewProj(Matrix4f.identity());
@@ -153,8 +154,8 @@ public class DeferredRenderer {
 	private void pointLightPass(Scene s) {
 		GL11.glEnable(GL11.GL_STENCIL_TEST);
 		LightBoundingVolume.sphere.bind();
-		Matrix4f viewProj = Matrix4f.mul(s.getCamera().getViewMatrix(), s
-				.getCamera().getProjectionMatrix());
+		Matrix4f viewProj = Matrix4f.mul(s.getCamera().getProjectionMatrix(), s
+				.getCamera().getViewMatrix());
 		for (PointLight p : s.lights) {
 			// Set up stencil pass
 			stencilShader.bind();
@@ -170,7 +171,7 @@ public class DeferredRenderer {
 			// Stencil pass
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
 
-			Matrix4f wvp = Matrix4f.mul(p.getToWorldMatrix(), viewProj);
+			Matrix4f wvp = Matrix4f.mul(viewProj,p.getToWorldMatrix());
 			stencilShader.SetWorldViewProjMatrix(wvp);
 			p.getBoundingVolume().draw();
 			Shader.unbind();

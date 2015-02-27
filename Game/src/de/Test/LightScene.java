@@ -25,10 +25,11 @@ public class LightScene extends Scene {
 	private int timer = 0;
 
 	public void init() {
+		super.clearColor = Color.blue;
 		GameObject cameraObject = new GameObject(null);
-		camera = new Camera(1280, 720, 0.1f, 1000.0f, 70.0f);
+		camera = new Camera();
 		cameraObject.addComponent(camera);
-		camera.setProjectionType(ProjectionType.Perspective);
+		camera.setProjectionType(ProjectionType.Orthographic);
 		camera.getTransform().setPosition(new Vector3f(0, 2, 10));
 		super.setClearColor(Color.blue);
 

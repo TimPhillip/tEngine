@@ -13,21 +13,23 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
 import de.tEngine.machine.Machine;
+
 /**
  * The basic Engine class. All applications using tEngine extend this class
+ * 
  * @author Tim Schneider
  *
  */
 public abstract class Engine {
-	
+
 	private boolean isRunning = false;
 	protected String windowTitle = "Java Game Project Tim Schneider 2014";
 	private MasterRenderer renderer;
-	
+
 	private static Engine activeEngine;
-	
+
 	protected Scene currentScene;
-	
+
 	public static Engine getActiveEngine() {
 		return activeEngine;
 	}
@@ -38,19 +40,20 @@ public abstract class Engine {
 
 	/**
 	 * Initializes a new tEngine-Application
-	 * @param width the window's width
-	 * @param height the windows's height
+	 * 
+	 * @param width
+	 *            the window's width
+	 * @param height
+	 *            the windows's height
 	 */
-	public Engine(int width, int height)
-	{
-		Machine.getInstance().setWidth(width);
-		Machine.getInstance().setHeight(height);
-		
+	public Engine() {
+		//Invoke the machine
+		Machine.getInstance();
 		renderer = new MasterRenderer();
 		initWindow(null);
 	}
-	
-	public Engine(Canvas display){
+
+	public Engine(Canvas display) {
 		Machine.getInstance().setWidth(display.getWidth());
 		Machine.getInstance().setHeight(display.getHeight());
 		renderer = new MasterRenderer();
@@ -60,29 +63,28 @@ public abstract class Engine {
 	/**
 	 * Starts the engine with a standard scene
 	 */
-	public void start()
-	{
+	public void start() {
 		Scene s = new Scene();
 		start(s);
 	}
-	
+
 	/**
 	 * Starts the engine with the given scene
+	 * 
 	 * @param s
 	 */
-	public void start(Scene s)
-	{	
-		//Load some basic meshes once
+	public void start(Scene s) {
+		// Load some basic meshes once
 		Mesh.loadBasicMeshes();
-		//Initialize the scene
+		// Initialize the scene
 		s.init();
-		//Initialize the renderer 
+		// Initialize the renderer
 		renderer.init();
-		//Start the engine loop
+		// Start the engine loop
 		isRunning = true;
 		run();
 	}
-	
+
 	public MasterRenderer getRenderer() {
 		return renderer;
 	}
@@ -90,71 +92,89 @@ public abstract class Engine {
 	/**
 	 * Stops the engine
 	 */
-	public void stop()
-	{
+	public void stop() {
 		isRunning = false;
 	}
-	
+
 	/**
 	 * Initializes a new window
 	 */
-	private void initWindow(Canvas parent)
-	{
+	private void initWindow(Canvas parent) {
 		org.lwjgl.opengl.PixelFormat pf = new org.lwjgl.opengl.PixelFormat();
-		ContextAttribs context = new ContextAttribs(3,2).withProfileCore(true);
-		DisplayMode dm = new DisplayMode(Machine.getInstance().getWidth(),Machine.getInstance().getHeight());
+		ContextAttribs context = new ContextAttribs(3, 2).withProfileCore(true);
+		DisplayMode dm = null;
+		if (Machine.getInstance().isFullscreen()) {
+			try {
+				for (DisplayMode d : Display.getAvailableDisplayModes()) {
+					if (d.getWidth() == Machine.getInstance().getWidth()
+							&& d.getHeight() == Machine.getInstance()
+									.getHeight() && d.isFullscreenCapable())
+						dm = d;
+				}
+				
+				if(dm == null){
+					System.out.println("Error: No resolution found!");
+					System.exit(0);
+				}
+			} catch (LWJGLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}else{
+			dm = new DisplayMode(Machine.getInstance().getWidth(),Machine.getInstance().getHeight());
+		}
 		try {
 			Display.setDisplayMode(dm);
 			Display.setTitle(windowTitle);
-			if(parent != null)
+			Display.setFullscreen(true);
+			if (parent != null)
 				Display.setParent(parent);
-			Display.create(pf,context);
+			Display.create(pf, context);
 		} catch (LWJGLException e) {
 			// Something with the window creation failed
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Does the loop of the engine
 	 */
-	private void run()
-	{
+	private void run() {
 
-		System.out.println("OpenGL version: " + GL11.glGetString(GL11.GL_VERSION));
-		System.out.println("GLSL version: " + GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
-		
-		while(isRunning)
-		{
-			//if the 'x'-Button was clicked, stop the engine loop
-			if(Display.isCloseRequested())
+		System.out.println("OpenGL version: "
+				+ GL11.glGetString(GL11.GL_VERSION));
+		System.out.println("GLSL version: "
+				+ GL11.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
+
+		while (isRunning) {
+			// if the 'x'-Button was clicked, stop the engine loop
+			if (Display.isCloseRequested())
 				this.stop();
-			//Check for input
+			// Check for input
 			input();
-			//Update the scene states
+			// Update the scene states
 			update();
-			renderer.render(currentScene);			
+			renderer.render(currentScene);
 			Display.update();
 		}
 		cleanUp();
 	}
-	
+
 	/**
 	 * Override this input method to handle inputs
 	 */
 	protected abstract void input();
-	
+
 	/**
 	 * Override this Update method to handle updates
 	 */
 	protected abstract void update();
-	
+
 	/**
 	 * Cleans up before the program exits
 	 */
-	private void cleanUp()
-	{
+	private void cleanUp() {
 		Display.destroy();
 	}
 }

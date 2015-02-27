@@ -292,12 +292,12 @@ public class Quaternion{
 	 * @return
 	 */
 	public static Quaternion fromEulerRotation(Vector3f euler){
-		//Yaw
-		Quaternion rot = Quaternion.fromAxisAngle(new Vector3f(0,1,0), euler.y);
-		//Pitch
-		rot = Quaternion.mul(Quaternion.fromAxisAngle(new Vector3f(1,0,0), euler.x),rot);
 		//Roll
-		rot = Quaternion.mul(Quaternion.fromAxisAngle(new Vector3f(0,0,1), euler.z),rot);
+		Quaternion rot = Quaternion.fromAxisAngle(new Vector3f(0,0,1), euler.z);
+		//Pitch
+		rot = Quaternion.mul(rot,Quaternion.fromAxisAngle(new Vector3f(1,0,0), euler.x));
+		//Yaw
+		rot = Quaternion.mul(rot,Quaternion.fromAxisAngle(new Vector3f(0,1,0), euler.y));
 		
 		return rot;
 	}

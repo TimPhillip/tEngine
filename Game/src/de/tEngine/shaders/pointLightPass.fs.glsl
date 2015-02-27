@@ -8,12 +8,13 @@ uniform vec3 lightPosition;
 uniform vec3 lightColor;
 uniform vec3 lightAttenuation;
 uniform float lightIntensity;
+uniform vec2 screenSize;
 
 out vec4 FragColor;
 
 vec2 CalcTexCoord()
 {
-	return gl_FragCoord.xy / vec2(1280,720);
+	return gl_FragCoord.xy / screenSize;
 }
 
 void main(void)
