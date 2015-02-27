@@ -82,14 +82,17 @@ public class MatrixMathTest {
 				{10,20,30,40},
 				{10,20,30,40}
 		});
-		
+
 		Matrix4f result1 = Matrix4f.mul(matrix, Matrix4f.identity());
 		Matrix4f result2 = Matrix4f.mul(Matrix4f.identity(),matrix);
 		Matrix4f result3 = Matrix4f.mul(a, b);
+
 		Matrix4f result4 = Matrix4f.mul(b, a);
+
 		assertEquals(matrix,result1);
 		assertEquals(matrix,result2);
 		assertEquals(c,result3);
+
 		assertEquals(d,result4);
 	}
 	
