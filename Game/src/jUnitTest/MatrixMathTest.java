@@ -184,7 +184,6 @@ public class MatrixMathTest {
 	public void eulerRotationMatrixTest(){
 		Matrix4f rotM = Matrix4f.rotationMatrix(new Vector3f((float)Math.toRadians(90),(float)Math.toRadians(90),0));
 		Vector3f result = rotM.transform(new Vector3f(-1,0,0).toHomogeneousCoordVector()).toVector3f();
-		System.out.println("Euler: " + result);
 		assertTrue(result.equals(new Vector3f(0,-1,0), 0.00001f));
 		result = rotM.getInverse().transform(result.toHomogeneousCoordVector()).toVector3f();
 		assertTrue(result.equals(new Vector3f(-1,0,0), 0.00001f));
