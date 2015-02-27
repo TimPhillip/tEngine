@@ -463,7 +463,7 @@ public class Matrix4f {
 	public void storeInFloatBuffer(FloatBuffer buffer){
 		for(int i =0; i < 4;i++){
 			for(int j=0; j<4;j++){
-				buffer.put(m[i][j]);
+				buffer.put(m[j][i]);
 			}
 		}
 	}

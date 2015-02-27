@@ -1,6 +1,6 @@
 <graphics>
 	<resolution>
-		<width>500</width>
+		<width>1280</width>
 		<height>720</height>
 		<frames>max</frames>
 		<fullscreen>false</fullscreen>
