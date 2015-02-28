@@ -80,7 +80,7 @@ public class DeferredRenderer {
 			shadowMapShader.bind();
 			shadowMapShader.setLightView(s.dirLight.getLightViewMatrix());
 			shadowMapShader.setLightProj(s.dirLight.getLightProjMatrix());
-			// shadowMapShader.setLightProj(s.camera.getProjectionMatrix());
+			
 			m.getMesh().bind();
 			// GL11.glCullFace(GL11.GL_FRONT);
 			for (GameObject instance : instances) {
@@ -188,7 +188,7 @@ public class DeferredRenderer {
 			pointLightShader.SetUpTextureUnits();
 			pointLightShader.SetPointLight(p);
 			pointLightShader.SetWorldViewProj(Matrix4f.mul(
-					p.getToWorldMatrix(), viewProj));
+					viewProj,p.getToWorldMatrix()));
 			LightBoundingVolume.sphere.draw();
 		}
 
