@@ -98,6 +98,9 @@ public class Camera extends Component {
 			projectionMatrix.m[2][3] = -1;
 			projectionMatrix.m[3][2] = -((2 * nearPlane * farPlane) / frustum_length);
 			projectionMatrix.m[3][3] = 0;
+			
+			projectionMatrix.transpose();
+			
 		} else if (projectionType == ProjectionType.Orthographic) {
 			float aspectRatio = width / height;
 			aspectRatio = 1.0f;
