@@ -69,18 +69,25 @@ public class LightScene extends Scene {
 		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			camera.getTransform().translate(Vector3f.scale(camera.getTransform().backward(), moveSpeed));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
 			camera.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), -rotSpeed));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 			camera.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), rotSpeed));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
 			camera.getTransform().translate(new Vector3f(0, moveSpeed, 0));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
 			camera.getTransform().translate(new Vector3f(0, -moveSpeed, 0));
 		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_A)){
+			camera.getTransform().translate(Vector3f.scale(camera.getTransform().left(), moveSpeed));
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
+			camera.getTransform().translate(Vector3f.scale(camera.getTransform().right(), moveSpeed));
+		}
+		
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_L) && ! Keyboard.isRepeatEvent()){
 			if(dirLight.getIntensity() > 0){
