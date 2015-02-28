@@ -40,7 +40,7 @@ public class DeferredRenderer {
 		stencilShader = new StencilPassShader();
 		shadowMapShader = new ShadowMapShader();
 
-		shadowMap = new ShadowMap(720,720);
+		shadowMap = new ShadowMap(12000,12000);
 		shadowDepth = new TexturePane();
 	}
 
@@ -69,6 +69,7 @@ public class DeferredRenderer {
 		
 		for (Model m : Model.getAllModels()) {
 			gBuffer.bindForWriting();
+			GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
 			List<GameObject> instances = s.getModelInstancesMap().get(m);
 			if (instances == null || instances.isEmpty())
 				continue;
@@ -80,6 +81,7 @@ public class DeferredRenderer {
 			}
 			// Shadow Mapping
 			shadowMap.bindForWriting();
+			GL11.glViewport(0, 0, shadowMap.getWidth(), shadowMap.getHeight());
 			shadowMapShader.bind();
 			shadowMapShader.setLightView(s.dirLight.getLightViewMatrix());
 			shadowMapShader.setLightProj(s.dirLight.getLightProjMatrix());

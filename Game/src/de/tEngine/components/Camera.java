@@ -102,8 +102,7 @@ public class Camera extends Component {
 			projectionMatrix.transpose();
 			
 		} else if (projectionType == ProjectionType.Orthographic) {
-			float aspectRatio = width / height;
-			aspectRatio = 1.0f;
+			float aspectRatio = ((float)width) / height;
 			return Matrix4f.orthoProjectionMatrix(-aspectRatio *20,aspectRatio * 20, -20, 20, nearPlane,
 					farPlane);
 		}
