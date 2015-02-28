@@ -40,7 +40,7 @@ public class DeferredRenderer {
 		stencilShader = new StencilPassShader();
 		shadowMapShader = new ShadowMapShader();
 
-		shadowMap = new ShadowMap(1280,720);
+		shadowMap = new ShadowMap(720,720);
 		shadowDepth = new TexturePane();
 	}
 
@@ -59,11 +59,14 @@ public class DeferredRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(true);
 		GL11.glDisable(GL11.GL_BLEND);
+		//Clear the shadow map
 		shadowMap.bindForWriting();
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
+		//Clear the gBuffer
 		gBuffer.bindForWriting();
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+		
 		for (Model m : Model.getAllModels()) {
 			gBuffer.bindForWriting();
 			List<GameObject> instances = s.getModelInstancesMap().get(m);
@@ -98,20 +101,22 @@ public class DeferredRenderer {
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 		gBuffer.bindForReading();
-		int halfWidth = 1280 / 2;
-		int halfHeight = 720 / 2;
+		int width = Machine.getInstance().getWidth();
+		int height = Machine.getInstance().getHeight();
+		int halfWidth = width / 2;
+		int halfHeight = height / 2;
 		// Display Position in the lower left corner
 		gBuffer.SetReadBuffer(GBufferTextureType.Position);
-		GL30.glBlitFramebuffer(0, 0, 1280, 720, 0, 0, halfWidth, halfHeight,
+		GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, halfWidth, halfHeight,
 				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 		// Display Diffuse in the upper left corner
 		gBuffer.SetReadBuffer(GBufferTextureType.Diffuse);
-		GL30.glBlitFramebuffer(0, 0, 1280, 720, 0, halfHeight, halfWidth, 720,
+		GL30.glBlitFramebuffer(0, 0, width, height, 0, halfHeight, halfWidth, height,
 				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 		// Display Normal in the upper right corner
 		gBuffer.SetReadBuffer(GBufferTextureType.Normal);
-		GL30.glBlitFramebuffer(0, 0, 1280, 720, halfWidth, halfHeight, 1280,
-				720, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+		GL30.glBlitFramebuffer(0, 0, width, height, halfWidth, halfHeight, width,
+				height, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 	}
 
 	private void lightPass(Scene s) {

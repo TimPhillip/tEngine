@@ -65,8 +65,8 @@ public class DirectionalLight extends Component {
 	public Matrix4f getLightViewMatrix() {
 		Matrix4f rot = Matrix4f.rotationMatrix(transform.getRotation());
 		rot.invert();
-		return Matrix4f.mul(Matrix4f.translationMatrix(transform.getPosition()
-				.getNegated()), rot);
+		return Matrix4f.mul(rot,Matrix4f.translationMatrix(transform.getPosition()
+				.getNegated()));
 	}
 	
 	public Matrix4f getLightProjMatrix(){
