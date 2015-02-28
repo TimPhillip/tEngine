@@ -57,10 +57,8 @@ public class LightScene extends Scene {
 	}
 
 	public void update() {
-		if(timer > 100){
-			//dirLight.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
-			timer = 0;
-		}
+		cube.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
+			
 		//cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
 		timer ++;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {

@@ -73,4 +73,9 @@ public class DirectionalLight extends Component {
 		return Matrix4f.orthoProjectionMatrix(-60,
 				60, -60, 60, -40.0f, 40.0f);
 	}
+	
+	public Matrix4f getLightProjMatrix(float aspectRatio){
+		return Matrix4f.orthoProjectionMatrix(-60 * aspectRatio,
+				60 * aspectRatio, -60, 60, -40.0f, 40.0f);
+	}
 }
