@@ -487,6 +487,6 @@ public class Matrix4f {
 		ortho.m[2][2] = -2.0f/(far - near);
 		ortho.m[2][3] = -1.0f * (far + near)/(far -near);
 		ortho.m[3][3] = 1.0f;
-		return ortho.getTranspose();
+		return ortho;
 	}
 }
