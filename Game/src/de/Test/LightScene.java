@@ -29,7 +29,7 @@ public class LightScene extends Scene {
 		GameObject cameraObject = new GameObject(null);
 		camera = new Camera();
 		cameraObject.addComponent(camera);
-		camera.setProjectionType(ProjectionType.Orthographic);
+		camera.setProjectionType(ProjectionType.Perspective);
 		camera.getTransform().setPosition(new Vector3f(0, 2, 10));
 		super.setClearColor(Color.blue);
 

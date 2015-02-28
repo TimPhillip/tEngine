@@ -54,7 +54,7 @@ public class DirectionalLightPassShader extends Shader {
 		super.SetUniformFloat(lightIntensity_Location, light.getIntensity());
 		Vector3f color = new Vector3f(light.getColor().getRed() / 255.0f,light.getColor().getGreen() / 255.0f,light.getColor().getBlue() / 255.0f);
 		super.SetUniformVector3f(lightColor_Location, color);
-		Matrix4f vp = Matrix4f.mul(light.getLightViewMatrix(),light.getLightProjMatrix());
+		Matrix4f vp = Matrix4f.mul(light.getLightProjMatrix(),light.getLightViewMatrix());
 		super.SetUniformMatrix4f(lightViewProj_Location, vp);
 	}
 	
