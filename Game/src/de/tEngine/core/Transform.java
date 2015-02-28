@@ -151,9 +151,9 @@ public class Transform {
 	private Matrix4f computeToWorldMatrix() {
 		Matrix4f world = new Matrix4f();
 		//Compute SRT 
-		world = Matrix4f.scalingMatrix(scale);
+		world = Matrix4f.translationMatrix(position);
 		world = Matrix4f.mul(world, Matrix4f.rotationMatrix(rotation));
-		world = Matrix4f.mul(world, Matrix4f.translationMatrix(position));
+		world = Matrix4f.mul(world, Matrix4f.scalingMatrix(scale));
 		transformChanged = false;
 		return world;
 	}

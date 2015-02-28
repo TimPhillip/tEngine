@@ -40,7 +40,7 @@ public class LightScene extends Scene {
 		super.addGameObject(ground);		
 		cube = new GameObject(OBJLoader.ModelFromFile("haus.obj", "haus.png"));
 		super.addGameObject(cube);
-		cube.getTransform().setPosition(new Vector3f(0,0,-5));
+		cube.getTransform().setPosition(new Vector3f(0,0,0));
 		for(int i =0; i < 0; i++){
 		GameObject l = new GameObject(null);
 		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));

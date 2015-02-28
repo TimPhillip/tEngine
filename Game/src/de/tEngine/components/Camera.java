@@ -118,8 +118,8 @@ public class Camera extends Component {
 	public Matrix4f getViewMatrix() {
 		Matrix4f rot = Matrix4f.rotationMatrix(transform.getRotation());
 		rot.invert();
-		return Matrix4f.mul(Matrix4f.translationMatrix(transform.getPosition()
-				.getNegated()), rot);
+		return Matrix4f.mul(rot,Matrix4f.translationMatrix(transform.getPosition()
+				.getNegated()));
 	}
 
 	public boolean isInsideTheFrustum(GameObject go) {
