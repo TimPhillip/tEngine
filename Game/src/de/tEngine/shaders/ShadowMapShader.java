@@ -5,7 +5,7 @@ import de.tEngine.math.Matrix4f;
 public class ShadowMapShader extends Shader {
 
 	private static final String VERTEX_FILE = "src/de/tEngine/shaders/shadowMap.vs.glsl";
-	private static final String FRAGMENT_FILE = "src/de/tEngine/shaders/empty.fs.glsl";
+	private static final String FRAGMENT_FILE = "src/de/tEngine/shaders/shadowMap.fs.glsl";
 
 	private int lightView_Location;
 	private int lightProj_Location;

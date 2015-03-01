@@ -19,6 +19,26 @@ vec2 CalcTexCoord()
 	return gl_FragCoord.xy / screenSize;
 }
 
+float chebyshevUpperBound( float distance,vec3 lightCoords)
+{
+	// We retrive the two moments previously stored (depth and depth*depth)
+	vec2 moments = texture2D(shadowMap,lightCoords.xy).rg;
+		
+	// Surface is fully lit. as the current fragment is before the light occluder
+	if (distance <= moments.x)
+		return 1.0 ;
+	
+	// The fragment is either in shadow or penumbra. We now use chebyshev's upperBound to check
+	// How likely this pixel is to be lit (p_max)
+	float variance = moments.y - (moments.x*moments.x);
+	variance = max(variance,0.00002);
+	
+	float d = distance - moments.x;
+	float p_max = variance / (variance + d*d);
+	
+	return p_max;
+}
+
 void main(void)
 {
 	vec2 TexCoord = CalcTexCoord();
@@ -31,11 +51,13 @@ void main(void)
 	vec3 LightCoords = LightSpacePos.xyz / LightSpacePos.w;
 	
 	LightCoords = LightCoords * 0.5f + vec3(0.5f);
-	float Depth = texture(shadowMap,LightCoords.xy).x;
-	if(Depth < (LightCoords.z - 1.0f / 1024)){
-		shadowFactor = 0.5f;
-	}
-	
-	FragColor = (k + 0.25) *shadowFactor * vec4(lightColor,1) * vec4(texture(gBufferDiffuse,TexCoord).xyz,1) * lightIntensity;
+	//float Depth = texture(shadowMap,LightCoords.xy).x;
+	//if(Depth < (LightCoords.z - 1.0f / 1024)){
+		//shadowFactor = 0.5f;
+	//}
+	shadowFactor = clamp(chebyshevUpperBound(LightCoords.z,LightCoords),0.4f,1.0f);
+	FragColor = (k ) *shadowFactor * vec4(lightColor,1) * vec4(texture(gBufferDiffuse,TexCoord).xyz,1) * lightIntensity;
 }
+
+
 
