@@ -44,7 +44,7 @@ void main(void)
 	vec2 TexCoord = CalcTexCoord();
 	vec3 Normal = texture(gBufferNormal,TexCoord).xyz;
 	vec3 Position = texture(gBufferPosition,TexCoord).xyz;
-	float k = max(dot(lightDirection * -1,Normal),0);
+	float diffuseFactor = max(dot(lightDirection * -1,Normal),0);
 	
 	float shadowFactor = 1.0f;
 	vec4 LightSpacePos = lightViewProj * vec4(Position,1.0f);
@@ -55,8 +55,8 @@ void main(void)
 	//if(Depth < (LightCoords.z - 1.0f / 1024)){
 		//shadowFactor = 0.5f;
 	//}
-	shadowFactor = clamp(chebyshevUpperBound(LightCoords.z,LightCoords),0.4f,1.0f);
-	FragColor = (k ) *shadowFactor * vec4(lightColor,1) * vec4(texture(gBufferDiffuse,TexCoord).xyz,1) * lightIntensity;
+	shadowFactor = chebyshevUpperBound(LightCoords.z,LightCoords);
+	FragColor = max(min(diffuseFactor,shadowFactor),0.2f) * vec4(lightColor,1) * lightIntensity * vec4(texture(gBufferDiffuse,TexCoord).xyz,1);
 }
 
 
