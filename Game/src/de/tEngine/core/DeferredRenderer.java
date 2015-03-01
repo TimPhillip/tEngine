@@ -15,6 +15,7 @@ import de.tEngine.core.GBuffer.GBufferTextureType;
 import de.tEngine.gui.TexturePane;
 import de.tEngine.machine.Machine;
 import de.tEngine.math.Matrix4f;
+import de.tEngine.math.Vector3f;
 import de.tEngine.shaders.*;
 
 public class DeferredRenderer {
@@ -27,6 +28,8 @@ public class DeferredRenderer {
 	private PointLightPassShader pointLightShader;
 	private StencilPassShader stencilShader;
 	private ShadowMapShader shadowMapShader;
+	
+	private GausianBlurFilter gausBlurFilter;
 
 	private ShadowMap shadowMap;
 	private TexturePane shadowDepth;
@@ -39,6 +42,8 @@ public class DeferredRenderer {
 		pointLightShader = new PointLightPassShader();
 		stencilShader = new StencilPassShader();
 		shadowMapShader = new ShadowMapShader();
+		
+		gausBlurFilter = new GausianBlurFilter();
 
 		shadowMap = new ShadowMap(2048,2048);
 		shadowDepth = new TexturePane();
@@ -47,6 +52,8 @@ public class DeferredRenderer {
 	public void render(Scene s) {
 		gBuffer.startFrame();
 		geometryPass(s);
+		
+		blurShadowMap(shadowMap, 0.9f);
 		if (showGBuffer) {
 			drawGBufferElements();
 		} else {
@@ -87,16 +94,41 @@ public class DeferredRenderer {
 			shadowMapShader.setLightProj(s.dirLight.getLightProjMatrix());
 			
 			m.getMesh().bind();
-			// GL11.glCullFace(GL11.GL_FRONT);
 			for (GameObject instance : instances) {
 				shadowMapShader.setWorldMatrix(instance.transform
 						.getToWorldMatrix());
 				instance.getModel().getMesh().draw();
 			}
-			// GL11.glCullFace(GL11.GL_BACK);
 			Shader.unbind();
 			GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
 		}
+	}
+	
+	private void blurShadowMap(ShadowMap shadowMap,float blurFactor){
+		GL11.glViewport(0, 0, shadowMap.getWidth(), shadowMap.getHeight());
+		gausBlurFilter.bind();
+		gausBlurFilter.SetBlurScale(new Vector3f(1.0f / (shadowMap.getWidth() * blurFactor),0,0));
+		shadowMap.bindForFiltering(false);
+		applyFilter(gausBlurFilter);
+		gausBlurFilter.bind();
+		gausBlurFilter.SetBlurScale(new Vector3f(0,1.0f / (shadowMap.getHeight() * blurFactor),0));
+		shadowMap.bindForFiltering(true);
+		applyFilter(gausBlurFilter);
+		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+	}
+	
+	private void applyFilter(FilterShader filter){
+		GL11.glDepthMask(false);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		filter.bind();
+		LightBoundingVolume.screenQuad.bind();
+		LightBoundingVolume.screenQuad.draw();
+		Mesh.unbind();
+		Shader.unbind();
+		GL11.glDepthMask(true);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	private void drawGBufferElements() {

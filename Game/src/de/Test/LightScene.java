@@ -51,7 +51,7 @@ public class LightScene extends Scene {
 		dirLight = new DirectionalLight();
 		GameObject dlGo = new GameObject(null);
 		dlGo.getTransform().setPosition(new Vector3f(0,5,10));
-		dlGo.getTransform().setRotation(Quaternion.fromAxisAngle(new Vector3f(-1,0,0), 0.5f));
+		dlGo.getTransform().setRotation(Quaternion.fromAxisAngle(new Vector3f(-1,0,0), 0.8f));
 		dlGo.addComponent(dirLight);
 		super.addGameObject(dlGo);
 	}

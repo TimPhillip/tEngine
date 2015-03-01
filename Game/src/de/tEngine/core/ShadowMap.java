@@ -13,6 +13,7 @@ public class ShadowMap {
 	private int width;
 	private int height;
 	private Texture shadowMapTexture;
+	private Texture filteringTempTexture;
 	private Texture depthTexture;
 	
 	public ShadowMap(int width,int height){
@@ -37,6 +38,18 @@ public class ShadowMap {
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_WRAP_S,GL12.GL_CLAMP_TO_EDGE);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_WRAP_T,GL12.GL_CLAMP_TO_EDGE);
 		GL30.glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, shadowMapTexture.getId(), 0);
+		
+		//Generate the second texture for filtering
+		filteringTempTexture = Texture.generateTextures(1)[0];
+		
+		//Initialize the texture
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, filteringTempTexture.getId());
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D,0,GL30.GL_RG32F,width,height,0,GL11.GL_RGBA,GL11.GL_FLOAT,(ByteBuffer)null);
+		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_WRAP_S,GL12.GL_CLAMP_TO_EDGE);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_WRAP_T,GL12.GL_CLAMP_TO_EDGE);
+		GL30.glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, GL11.GL_TEXTURE_2D, filteringTempTexture.getId(), 0);
 		
 		//Generate the depth map
 		depthTexture = Texture.generateTextures(1)[0];
@@ -65,6 +78,23 @@ public class ShadowMap {
 	public void bindForReading(int slot){
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + slot);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, shadowMapTexture.getId());
+	}
+	
+	public void bindForFiltering(boolean fromTemp){
+		if(fromTemp){
+			//Bind temp texture to read from
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, filteringTempTexture.getId());
+			//Bind shadowMap to write to
+			this.bindForWriting();
+		}else{
+			//Bind shadow map texture to read from
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, shadowMapTexture.getId());
+			//Bind temp texture to write to
+			GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, fboID);
+			GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT1);
+		}
 	}
 
 	/**
