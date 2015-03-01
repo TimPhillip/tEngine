@@ -40,7 +40,7 @@ public class DeferredRenderer {
 		stencilShader = new StencilPassShader();
 		shadowMapShader = new ShadowMapShader();
 
-		shadowMap = new ShadowMap(512,512);
+		shadowMap = new ShadowMap(2048,2048);
 		shadowDepth = new TexturePane();
 	}
 

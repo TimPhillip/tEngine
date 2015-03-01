@@ -57,7 +57,7 @@ public class LightScene extends Scene {
 	}
 
 	public void update() {
-		cube.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
+		//cube.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
 			
 		//cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
 		timer ++;
