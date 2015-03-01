@@ -40,7 +40,7 @@ public class DeferredRenderer {
 		stencilShader = new StencilPassShader();
 		shadowMapShader = new ShadowMapShader();
 
-		shadowMap = new ShadowMap(12000,12000);
+		shadowMap = new ShadowMap(512,512);
 		shadowDepth = new TexturePane();
 	}
 
@@ -95,6 +95,7 @@ public class DeferredRenderer {
 			}
 			// GL11.glCullFace(GL11.GL_BACK);
 			Shader.unbind();
+			GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
 		}
 	}
 
