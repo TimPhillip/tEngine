@@ -14,6 +14,7 @@ public class Main {
 
 	private int cpuCount = 8;
 	File output;
+	File outputGray;
 	public static void main(String[] args) {
 		new Main();
 		
@@ -24,15 +25,16 @@ public class Main {
 	}
 	
 	private void start(){
-		String source = "C:\\Users\\Jonas\\Pictures\\Jonas Abiball\\DSC01032.JPG";
-		String target = "C:\\Users\\Jonas\\Pictures\\render\\normal.png";
+		String source = "C:\\Users\\Jonas\\git\\tEngine\\Game\\res\\bricks_hopefully_tiling.jpg";
+		String target = "C:\\Users\\Jonas\\git\\tEngine\\Game\\res\\bricks_hopefully_tiling_normal.png";
+		String targetGreyscale = "C:\\Users\\Jonas\\git\\tEngine\\Game\\res\\bricks_hopefully_tiling_greyscale.png";
 		File input = new File(source.replace("\\", "/"));
 		if(!input.exists()){
 			displayFileNotFound(source.replace("\\", "/"));
 			return;
 		}
 		output = new File(target);
-		
+		outputGray = new File(targetGreyscale);
 		loadPicture(input);
 		
 	}
@@ -54,7 +56,9 @@ public class Main {
 			System.out.println("Error: Exception occured on reading file.");
 			return;
 		}
+		
 		int[][] imageGrayscale = new int[img.getWidth()][img.getHeight()];
+		int[][] imageGrayscaleBlurred = new int[img.getWidth()][img.getHeight()];
 		for(int x = 0; x<img.getWidth();x++){
 			for(int y = 0;y<img.getHeight();y++){
 				int rgb = img.getRGB(x, y);
@@ -64,7 +68,42 @@ public class Main {
 				imageGrayscale[x][y] = (red + green + blue) / 3;
 			}
 		}
-		computeNormal(imageGrayscale,img.getWidth(),img.getHeight());
+		
+		//Temporrary Box Blur
+		int maxDistanceforSampling =5;
+		double[][] gaussWeights =new double[maxDistanceforSampling*2+1][maxDistanceforSampling*2+1];
+		for(int i = 0;i<(maxDistanceforSampling*2+1)*(maxDistanceforSampling*2+1);i++){
+			gaussWeights[i/(maxDistanceforSampling*2+1)][i%(maxDistanceforSampling*2+1)] =1.0/((maxDistanceforSampling*2+1)*(maxDistanceforSampling*2+1));
+		}
+				
+		
+		
+		
+		int percentage = 0;	
+		for(int x = 0;x<img.getWidth();x++){
+			if((x *100 / img.getWidth())!= percentage){
+				percentage = (x *100 / img.getWidth());
+				System.out.println("Blurring "+percentage +"%");
+			}
+			
+			for(int y = 0;y<img.getHeight();y++){
+				double sum = 0;
+				for(int xInner = -1 *maxDistanceforSampling ;xInner <=maxDistanceforSampling;xInner++){
+					for(int yInner = -1 * maxDistanceforSampling;yInner<=maxDistanceforSampling;yInner++){
+						double weight = gaussWeights[(xInner+maxDistanceforSampling)] [(yInner+maxDistanceforSampling)];
+						int xPos = Math.max(0, Math.min(x + xInner,img.getWidth()-1));
+						int yPos = Math.max(0, Math.min(y + yInner,img.getHeight()-1));
+						//System.out.println(xPos + "|" + yPos);
+						sum += imageGrayscale[xPos][yPos] * weight;
+					}
+					
+				}
+				imageGrayscaleBlurred[x][y] = Math.max(0, Math.min((int)sum,255));
+				
+			}
+		}
+		
+		computeNormal(imageGrayscaleBlurred,img.getWidth(),img.getHeight());
 		
 	}
 	private void computeNormal(int[][]grayscale,int width, int height){
@@ -73,7 +112,9 @@ public class Main {
 		int coresVertical = Math.max(1, cpuCount/2 + cpuCount % 2);
 		double[][][] result = new double[width][height][3];
 		int bias = 127;
+		BufferedImage grayImg = new BufferedImage(width, height,BufferedImage.TYPE_INT_RGB);
 		BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		
 		for(int x = 0;x <width ; x++){
 			for(int y = 0;y< height;y++){
 				int deltax;
@@ -94,20 +135,49 @@ public class Main {
 				result[x][y][2] = (Math.sqrt(1-result[x][y][0]*result[x][y][0]-result[x][y][1]*result[x][y][1]));
 				Color col = new Color( (int) (result[x][y][0]*128 + bias), (int) (result[x][y][1]*128 + bias), (int) (result[x][y][2]*128 + bias));
 				bufImg.setRGB(x, y, col.getRGB());
-				System.out.println();
+				Color l = new Color(grayscale[x][y],grayscale[x][y], grayscale[x][y]);
+				grayImg.setRGB(x, y,l.getRGB());
+				
 			}
 		}
-		saveNormal(bufImg);
+		saveNormal(bufImg,grayImg);
 			
 		
 	}
-	private void saveNormal(BufferedImage bufImg){
+	private void saveNormal(BufferedImage bufImg,BufferedImage grayImg){
 		try {
 			ImageIO.write(bufImg, "png", output);
+			ImageIO.write(grayImg, "png", outputGray);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	private double[][] gaussianKernel(int maxDistance,double uglyGreekSignSquared){
+		int size = 1 + 2*maxDistance;
+		int mid = 1 + maxDistance;
+		double[][]gk = new double[size][size];
+		double sum = 0;
+		for(int x = 0;x <size;x++){
+			for(int y = 0;y<size;y++){
+				int xDistance = Math.abs(x-mid);
+				int yDistance = Math.abs(y-mid);
+				gk[x][y] = gaussianFunction(xDistance, yDistance, uglyGreekSignSquared);
+				sum +=gk[x][y];
+			}
+		}
+		double normalizeFactor = sum / (size * size);
+		//Normalize it!
+		for(int i = 0; i<size * size;i++){
+			//gk[i/size][i%size]/=normalizeFactor ;
+		}
+		return gk;
+	}
+	
+	private double gaussianFunction(double xDistance, double yDistance, double uglyGreekSignSquared){
+		double semiConstant =1/(2 * Math.PI *uglyGreekSignSquared);
+		double exponentTerm = Math.pow(Math.E, -1*(xDistance*xDistance+yDistance*yDistance)/(2*uglyGreekSignSquared));
+		return semiConstant * exponentTerm;
 	}
 
 }
