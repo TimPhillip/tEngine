@@ -19,6 +19,10 @@ vec2 CalcTexCoord()
 	return gl_FragCoord.xy / screenSize;
 }
 
+float linstep(float low,float high,float v){
+	return clamp((v-low)/(high-low),0,1);
+}
+
 float chebyshevUpperBound( float distance,vec3 lightCoords)
 {
 	// We retrive the two moments previously stored (depth and depth*depth)
@@ -34,7 +38,7 @@ float chebyshevUpperBound( float distance,vec3 lightCoords)
 	variance = max(variance,0.00002);
 	
 	float d = distance - moments.x;
-	float p_max = variance / (variance + d*d);
+	float p_max = linstep(0.3f,1.0f,variance / (variance + d*d));
 	
 	return p_max;
 }
