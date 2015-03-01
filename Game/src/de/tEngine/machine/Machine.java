@@ -27,19 +27,21 @@ public class Machine {
 	private int width;
 	private int height;
 	private int frameRate;
+	private int cpuCount;
 	private FrameRateStatus frameRateStatus;
 	private boolean fullscreen;
 
 	public Machine() {
 		os = OperatingSystem.determineOS();
-		readResolutionFromConfig("res/settings/graphics.xml");
+		readResolutionFromConfig("res/settings/settings.xml");
 	}
 
 	private void readResolutionFromConfig(String path) {
 		try {
 			Document doc = new SAXBuilder().build(new File(path));
 			Element root = doc.getRootElement();
-			Element res = root.getChild("resolution");
+			Element graphics = root.getChild("graphics");
+			Element res = graphics.getChild("resolution");
 			width = Integer.parseInt(res.getChild("width").getText());
 			height = Integer.parseInt(res.getChild("height").getText());
 			
@@ -55,6 +57,9 @@ public class Machine {
 			default:
 				frameRateStatus = FrameRateStatus.DEFAULT;
 			}
+			
+			Element system = root.getChild("system");
+			cpuCount = Integer.parseInt(system.getChildText("cpuCount"));
 			
 			fullscreen = Boolean.parseBoolean(res.getChildText("fullscreen"));
 
@@ -86,6 +91,14 @@ public class Machine {
 		this.height = height;
 	}
 	
+	public int getCpuCount() {
+		return cpuCount;
+	}
+
+	public void setCpuCount(int cpuCount) {
+		this.cpuCount = cpuCount;
+	}
+
 	public boolean isFullscreen(){
 		return fullscreen;
 	}
