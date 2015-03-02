@@ -6,7 +6,7 @@ uniform sampler2D gBufferNormal;
 
 uniform sampler2D shadowMap;
 uniform mat4 lightViewProj;
-
+uniform vec3 eyePosition;
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
 uniform float lightIntensity;
@@ -48,7 +48,14 @@ void main(void)
 	vec2 TexCoord = CalcTexCoord();
 	vec3 Normal = texture(gBufferNormal,TexCoord).xyz;
 	vec3 Position = texture(gBufferPosition,TexCoord).xyz;
+	
 	float diffuseFactor = max(dot(lightDirection * -1,Normal),0);
+	vec3 toEye = normalize(eyePosition - Position);
+	float specPower = 10.0f;
+	vec3 r = reflect(lightDirection,Normal);
+	float specFactor = pow(max(dot(toEye,r),0.0f),specPower);
+	if(dot(lightDirection * -1,Normal) <= 0){
+		specFactor = 0;}
 	
 	float shadowFactor = 1.0f;
 	vec4 LightSpacePos = lightViewProj * vec4(Position,1.0f);
@@ -60,7 +67,14 @@ void main(void)
 		//shadowFactor = 0.5f;
 	//}
 	shadowFactor = chebyshevUpperBound(LightCoords.z,LightCoords);
-	FragColor = max(min(diffuseFactor,shadowFactor),0.2f) * vec4(lightColor,1) * lightIntensity * vec4(texture(gBufferDiffuse,TexCoord).xyz,1);
+	//FragColor = max(min(diffuseFactor,shadowFactor),0.2f) * vec4(lightColor,1) * lightIntensity * vec4(texture(gBufferDiffuse,TexCoord).xyz,1);
+	
+	vec4 matColor = vec4(texture(gBufferDiffuse,TexCoord).xyz,1);
+	vec4 ambient = 0.4f * vec4(lightColor,1) * lightIntensity * matColor;
+	vec4 diffuse = diffuseFactor * lightIntensity * vec4(lightColor,1) * matColor;
+	vec4 specular = specFactor * vec4(lightColor,1) * matColor * lightIntensity;
+	
+	FragColor = ambient + shadowFactor * (diffuse + specular);
 }
 
 

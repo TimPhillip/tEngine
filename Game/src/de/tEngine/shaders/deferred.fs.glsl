@@ -21,7 +21,7 @@ vec3 CalcBumpedNormal()
     vec3 Tangent = normalize(worldTangent);
     Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
     vec3 Bitangent = cross(Tangent, Normal);
-    vec3 BumpMapNormal = texture(normalMapSampler, pass_texCoord).xyz;
+    vec3 BumpMapNormal = texture(normalMapSampler, pass_texCoord * materialTiles).xyz;
     BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
     vec3 NewNormal;
     mat3 TBN = mat3(Tangent, Bitangent, Normal);

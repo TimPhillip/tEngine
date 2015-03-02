@@ -51,10 +51,11 @@ public class PointLight extends Component {
 	}
 	
 	public Matrix4f getToWorldMatrix(){
-		Matrix4f world = Matrix4f.scalingMatrix(range, range, range);
+		Matrix4f world = Matrix4f.translationMatrix(transform.getPosition());
 		world.mul(Matrix4f.rotationMatrix(transform.getRotation()));
-		world.mul(Matrix4f.translationMatrix(transform.getPosition()));
+		world.mul(Matrix4f.scalingMatrix(range, range, range));
 		return world;
+		
 	}
 
 	/**

@@ -184,6 +184,7 @@ public class DeferredRenderer {
 		LightBoundingVolume.screenQuad.bind();
 		dirLightShader.SetScreenSize(Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
 		dirLightShader.SetUpTextureUnits();
+		dirLightShader.SetCameraPosition(s.camera.getTransform().getPosition());
 		dirLightShader.SetDirectionalLight(s.dirLight);
 		dirLightShader.SetWorldViewProj(Matrix4f.identity());
 		shadowMap.bindForReading(3);

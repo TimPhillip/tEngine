@@ -12,7 +12,7 @@ public class DirectionalLight extends Component {
 	
 	public DirectionalLight(){
 		direction = new Vector3f(0,-1f,-1);
-		intensity = 1.3f;
+		intensity = 1.0f;
 		color = color.white;
 	}
 

@@ -37,8 +37,8 @@ public class LightScene extends Scene {
 
 		GameObject ground = new GameObject(OBJLoader.ModelFromFile(
 				"ground.obj", "ground.png"));
-		ground.getModel().getMaterial().setTilesU(75);
-		ground.getModel().getMaterial().setTilesV(75);
+		ground.getModel().getMaterial().setTilesU(150);
+		ground.getModel().getMaterial().setTilesV(150);
 		super.addGameObject(ground);		
 		house = new GameObject(OBJLoader.ModelFromFile("haus.obj", "haus.png"));
 		super.addGameObject(house);
@@ -49,18 +49,21 @@ public class LightScene extends Scene {
 		cube.getTransform().setPosition(new Vector3f(5,1,10));
 		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.up(), (float)Math.toRadians(45)));
 		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("bricks_hopefully_tiling_normal.png"));
+		cube.getModel().getMaterial().setTilesU(0.5f);
+		cube.getModel().getMaterial().setTilesV(0.5f);
 		super.addGameObject(cube);
 		
 		for(int i =0; i < 0; i++){
 		GameObject l = new GameObject(null);
-		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
+		//l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
+		l.getTransform().setPosition(new Vector3f(5,1,12));
 		l.addComponent(new PointLight());
 		lights.add(l.getComponent(PointLight.class));
 		super.addGameObject(l);
 		}
 		dirLight = new DirectionalLight();
 		GameObject dlGo = new GameObject(null);
-		dlGo.getTransform().setPosition(new Vector3f(0,5,10));
+		dlGo.getTransform().setPosition(new Vector3f(0,5,0));
 		dlGo.getTransform().setRotation(Quaternion.fromAxisAngle(new Vector3f(-1,0,0), 0.8f));
 		dlGo.addComponent(dirLight);
 		super.addGameObject(dlGo);
