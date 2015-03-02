@@ -113,6 +113,7 @@ public class Mesh {
 		float[] positions = new float[vertices.length * 3];
 		float[] texCoords = new float[vertices.length * 2];
 		float[] normals = new float[vertices.length * 3];
+		float[] tangents = new float[vertices.length * 3];
 
 		// Loop through all the vertices
 		for (int i = 0; i < vertices.length; i++) {
@@ -130,6 +131,11 @@ public class Mesh {
 			normals[i * 3] = normal.x;
 			normals[i * 3 + 1] = normal.y;
 			normals[i * 3 + 2] = normal.z;
+			//Get the tangents data
+			Vector3f tangent = vertices[i].getTangent();
+			tangents[i * 3] = tangent.x;
+			tangents[i * 3 + 1] = tangent.y;
+			tangents[i * 3 + 2] = tangent.z;
 		}
 
 		// Store all positions in slot 0
@@ -138,6 +144,8 @@ public class Mesh {
 		storeDataInVAO(1, 2, texCoords);
 		// Store all the normals in slot 2
 		storeDataInVAO(2, 3, normals);
+		// Store all the tangents in slot 3
+		storeDataInVAO(3, 3, tangents);
 
 		unbind();
 	}
@@ -241,6 +249,7 @@ public class Mesh {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
+		GL20.glEnableVertexAttribArray(3);
 	}
 
 	/**
@@ -256,6 +265,7 @@ public class Mesh {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
+		GL20.glDisableVertexAttribArray(3);
 	}
 
 	/**

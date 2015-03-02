@@ -85,16 +85,51 @@ public class OBJLoader {
 				vertices.get(indices.get(i + 1)).setNormal(Vector3f.add(normal, vertices.get(indices.get(i + 1)).getNormal()));
 				vertices.get(indices.get(i + 2)).setNormal(Vector3f.add(normal, vertices.get(indices.get(i + 2)).getNormal()));
 			}
+			
 			//normalise all the normal vectors
 			for(int i =0; i< vertices.size(); i++)
 			{
 				vertices.get(i).getNormal().normalize();
 			}
+			
+			//Compute the tangent vectors
+			for(int i=0; i < indices.size();i += 3){
+				Vertex v0 = vertices.get(indices.get(i + 0));
+				Vertex v1 = vertices.get(indices.get(i + 1));
+				Vertex v2 = vertices.get(indices.get(i + 2));
+				
+				Vector3f edge1 = Vector3f.sub(v1.getPosition(),v0.getPosition());
+				Vector3f edge2 = Vector3f.sub(v2.getPosition(),v0.getPosition());
+				
+				float deltaU1 = v1.getTexCoord().x - v0.getTexCoord().x;
+				float deltaV1 = v1.getTexCoord().y - v0.getTexCoord().y;
+				float deltaU2 = v2.getTexCoord().x - v0.getTexCoord().x;
+				float deltaV2 = v2.getTexCoord().y - v0.getTexCoord().y;
+				
+				float factor = 1.0f / (deltaU1 * deltaV2 - deltaU2 * deltaV1);
+				
+				Vector3f tangent = new Vector3f();
+				tangent.x = factor * (deltaV2 * edge1.x - deltaV1 * edge2.x);
+				tangent.y = factor * (deltaV2 * edge1.y - deltaV1 * edge2.y);
+				tangent.z = factor * (deltaV2 * edge1.z - deltaV1 * edge2.z);
+				
+				//Sum up the tangents for averaging
+				v0.getTangent().add(tangent);
+				v1.getTangent().add(tangent);
+				v2.getTangent().add(tangent);
+			}
+			
+			//Normalize all the vertex tangents
+			for(int i=0; i <vertices.size();i++){
+				vertices.get(i).getTangent().normalize();
+			}
+			
+			//Store the mesh
 			int[] ints = new int[indices.size()];
 			for(int i =0; i < ints.length;i++)
 			{
 				ints[i] = indices.get(i);
-			}			
+			}
 			mesh = new Mesh(vertices.toArray(new Vertex[vertices.size()]),ints);
 			mesh.setCullingRadius(cullingRadius);
 			br.close();
