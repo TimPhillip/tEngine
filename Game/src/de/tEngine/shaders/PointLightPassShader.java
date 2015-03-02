@@ -3,6 +3,7 @@ package de.tEngine.shaders;
 import de.tEngine.components.DirectionalLight;
 import de.tEngine.components.PointLight;
 import de.tEngine.math.Matrix4f;
+import de.tEngine.math.Vector2f;
 import de.tEngine.math.Vector3f;
 
 public class PointLightPassShader extends Shader {
@@ -18,6 +19,7 @@ public class PointLightPassShader extends Shader {
 	private int gPosition_Location;
 	private int gDiffuse_Location;
 	private int gNormal_Location;
+	private int screenSize_Location;
 	
 	public PointLightPassShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -38,6 +40,7 @@ public class PointLightPassShader extends Shader {
 		gNormal_Location = super.GetUniformLocation("gBufferNormal");
 		lightIntensity_Location = super.GetUniformLocation("lightIntensity");
 		lightAttenuation_Location = super.GetUniformLocation("lightAttenuation");
+		screenSize_Location = super.GetUniformLocation("screenSize");
 	}
 	
 	public void SetWorldViewProj(Matrix4f wvp){
@@ -56,6 +59,10 @@ public class PointLightPassShader extends Shader {
 		super.SetUniformInteger(gPosition_Location, 0);
 		super.SetUniformInteger(gDiffuse_Location, 1);
 		super.SetUniformInteger(gNormal_Location, 2);
+	}
+	
+	public void SetScreenSize(int width,int height){
+		super.SetUniformVector2f(screenSize_Location, new Vector2f(width,height));
 	}
 
 }

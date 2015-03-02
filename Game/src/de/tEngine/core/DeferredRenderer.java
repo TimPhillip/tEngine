@@ -227,6 +227,7 @@ public class DeferredRenderer {
 			pointLightShader.bind();
 			// light pass
 			pointLightShader.SetUpTextureUnits();
+			pointLightShader.SetScreenSize(Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
 			pointLightShader.SetPointLight(p);
 			pointLightShader.SetWorldViewProj(Matrix4f.mul(
 					viewProj,p.getToWorldMatrix()));

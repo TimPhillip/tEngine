@@ -53,12 +53,14 @@ public class LightScene extends Scene {
 		cube.getModel().getMaterial().setTilesV(0.5f);
 		super.addGameObject(cube);
 		
-		for(int i =0; i < 0; i++){
+		for(int i =0; i < 100; i++){
 		GameObject l = new GameObject(null);
-		//l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
-		l.getTransform().setPosition(new Vector3f(5,1,12));
+		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
+		//l.getTransform().setPosition(new Vector3f(5,1,12));
 		l.addComponent(new PointLight());
-		lights.add(l.getComponent(PointLight.class));
+		PointLight pl = l.getComponent(PointLight.class);
+		pl.setColor(Color.blue);
+		lights.add(pl);
 		super.addGameObject(l);
 		}
 		dirLight = new DirectionalLight();
