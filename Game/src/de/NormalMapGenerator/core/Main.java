@@ -70,13 +70,13 @@ public class Main {
 		}
 		
 		//Temporrary Box Blur
-		int maxDistanceforSampling =5;
-		double[][] gaussWeights =new double[maxDistanceforSampling*2+1][maxDistanceforSampling*2+1];
+		int maxDistanceforSampling =20;
+		/*double[][] gaussWeights =new double[maxDistanceforSampling*2+1][maxDistanceforSampling*2+1];
 		for(int i = 0;i<(maxDistanceforSampling*2+1)*(maxDistanceforSampling*2+1);i++){
 			gaussWeights[i/(maxDistanceforSampling*2+1)][i%(maxDistanceforSampling*2+1)] =1.0/((maxDistanceforSampling*2+1)*(maxDistanceforSampling*2+1));
-		}
+		}*/
 				
-		
+		double[][] gaussWeights = gaussianKernel(maxDistanceforSampling,100);
 		
 		
 		int percentage = 0;	
@@ -153,7 +153,7 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-	private double[][] gaussianKernel(int maxDistance,double uglyGreekSignSquared){
+	public static double[][] gaussianKernel(int maxDistance,double uglyGreekSignSquared){
 		int size = 1 + 2*maxDistance;
 		int mid = 1 + maxDistance;
 		double[][]gk = new double[size][size];
@@ -166,18 +166,20 @@ public class Main {
 				sum +=gk[x][y];
 			}
 		}
-		double normalizeFactor = sum / (size * size);
+		double normalizeFactor =sum;
 		//Normalize it!
+		sum = 0;
 		for(int i = 0; i<size * size;i++){
-			//gk[i/size][i%size]/=normalizeFactor ;
+			gk[i/size][i%size]/=normalizeFactor ;
+			sum+=gk[i/size][i%size];
 		}
+		assert Math.abs(sum -1 )<0.000005;
 		return gk;
 	}
 	
-	private double gaussianFunction(double xDistance, double yDistance, double uglyGreekSignSquared){
-		double semiConstant =1/(2 * Math.PI *uglyGreekSignSquared);
-		double exponentTerm = Math.pow(Math.E, -1*(xDistance*xDistance+yDistance*yDistance)/(2*uglyGreekSignSquared));
-		return semiConstant * exponentTerm;
+	public static double gaussianFunction(double xDistance, double yDistance, double uglyGreekSignSquared){
+	
+		return (1.0/(2.0 * Math.PI * uglyGreekSignSquared)) * Math.pow(Math.E, -1.0 * (Math.pow(xDistance, 2)+Math.pow(yDistance, 2))/(2.0 * uglyGreekSignSquared));
 	}
 
 }
