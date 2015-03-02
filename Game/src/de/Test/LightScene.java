@@ -12,6 +12,7 @@ import de.tEngine.components.PointLight;
 import de.tEngine.core.GameObject;
 import de.tEngine.core.Model;
 import de.tEngine.core.Scene;
+import de.tEngine.core.Texture;
 import de.tEngine.loader.OBJLoader;
 
 public class LightScene extends Scene {
@@ -19,6 +20,7 @@ public class LightScene extends Scene {
 	private float moveSpeed = 0.02f;
 	private float rotSpeed = 0.003f;
 
+	private GameObject house;
 	private GameObject cube;
 
 	// Timer
@@ -38,9 +40,17 @@ public class LightScene extends Scene {
 		ground.getModel().getMaterial().setTilesU(75);
 		ground.getModel().getMaterial().setTilesV(75);
 		super.addGameObject(ground);		
-		cube = new GameObject(OBJLoader.ModelFromFile("haus.obj", "haus.png"));
+		house = new GameObject(OBJLoader.ModelFromFile("haus.obj", "haus.png"));
+		super.addGameObject(house);
+		house.getTransform().setPosition(new Vector3f(0,0,0));
+		
+		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "bricks_hopefully_tiling.jpg"));
+		//cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "white.png"));
+		cube.getTransform().setPosition(new Vector3f(5,1,10));
+		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.up(), (float)Math.toRadians(45)));
+		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("bricks_hopefully_tiling_normal.png"));
 		super.addGameObject(cube);
-		cube.getTransform().setPosition(new Vector3f(0,0,0));
+		
 		for(int i =0; i < 0; i++){
 		GameObject l = new GameObject(null);
 		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
@@ -57,9 +67,12 @@ public class LightScene extends Scene {
 	}
 
 	public void update() {
-		//cube.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
+		//house.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
 			
-		//cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
+		//house.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
+		
+		cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
+		
 		timer ++;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			camera.getTransform().translate(Vector3f.scale(camera.getTransform().forward(), moveSpeed));

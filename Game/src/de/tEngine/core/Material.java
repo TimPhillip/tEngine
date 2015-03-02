@@ -20,6 +20,7 @@ public class Material {
 	private boolean doubleSided;
 	private boolean wireframe;
 	private Texture texture;
+	private Texture normalMap;
 	private float tilesU;
 	private float tilesV;
 	
@@ -31,6 +32,7 @@ public class Material {
 	{
 		shader = new StandardShader();
 		texture = Texture.loadFromFile("white.png");
+		normalMap = Texture.loadFromFile("normal_up.jpg");
 		setColor(Color.WHITE);
 		setGlow(false);
 		doubleSided = false;
@@ -43,6 +45,8 @@ public class Material {
 		setOpenGlStates();
 		shader.SetMaterial(this);
 		texture.bind();
+		//Bind the normal map to slot 1
+		normalMap.bind(1);
 	}
 	
 	private void setOpenGlStates(){
@@ -168,6 +172,20 @@ public class Material {
 	 */
 	public void setTilesV(float tilesV) {
 		this.tilesV = tilesV;
+	}
+
+	/**
+	 * @return the normalMap
+	 */
+	public Texture getNormalMap() {
+		return normalMap;
+	}
+
+	/**
+	 * @param normalMap the normalMap to set
+	 */
+	public void setNormalMap(Texture normalMap) {
+		this.normalMap = normalMap;
 	}
 
 }
