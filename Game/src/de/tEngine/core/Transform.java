@@ -362,4 +362,9 @@ public class Transform {
 		MaterialShader shader = Engine.getActiveEngine().getRenderer().getBoundMaterialShader();
 		shader.SetWorldMatrix(this.getToWorldMatrix());
 	}
+	
+	public Vector3f getLocalVector(Vector3f worldVector){
+		Matrix4f w = this.getToWorldMatrix().getInverse();
+		return w.transform(worldVector.toHomogeneousCoordVector()).toVector3f();
+	}
 }

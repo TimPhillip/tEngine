@@ -47,13 +47,13 @@ public class LightScene extends Scene {
 		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "bricks_hopefully_tiling.jpg"));
 		//cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "white.png"));
 		cube.getTransform().setPosition(new Vector3f(5,1,10));
-		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.up(), (float)Math.toRadians(45)));
+		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.left(), 0.8f));
 		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("bricks_hopefully_tiling_normal.png"));
 		cube.getModel().getMaterial().setTilesU(0.5f);
 		cube.getModel().getMaterial().setTilesV(0.5f);
 		super.addGameObject(cube);
 		
-		for(int i =0; i < 100; i++){
+		for(int i =0; i < 10; i++){
 		GameObject l = new GameObject(null);
 		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
 		//l.getTransform().setPosition(new Vector3f(5,1,12));
@@ -76,7 +76,8 @@ public class LightScene extends Scene {
 			
 		//house.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
 		
-		cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
+		//cube.getTransform().rotate(Quaternion.fromAxisAngle(cube.getTransform().getLocalVector(Vector3f.up()), 0.0004f));
+		dirLight.getGameObject().getTransform().rotate(Quaternion.fromAxisAngle(dirLight.getTransform().getLocalVector(Vector3f.up()), 0.0001f));
 		
 		timer ++;
 		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
