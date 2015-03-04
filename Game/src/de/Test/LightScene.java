@@ -74,7 +74,7 @@ public class LightScene extends Scene {
 	public void update() {
 		//house.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
 		
-		//house.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
+		cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0020f));
 		
 		//cube.getTransform().rotate(Quaternion.fromAxisAngle(cube.getTransform().getLocalVector(Vector3f.up()), 0.0004f));
 		dirLight.getGameObject().getTransform().rotate(Quaternion.fromAxisAngle(dirLight.getTransform().getLocalVector(Vector3f.up()), 0.0001f));
