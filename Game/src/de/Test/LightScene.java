@@ -105,7 +105,6 @@ public class LightScene extends Scene {
 			camera.getTransform().translate(Vector3f.scale(camera.getTransform().right(), moveSpeed));
 		}
 		
-		
 		if(Keyboard.isKeyDown(Keyboard.KEY_L) && ! Keyboard.isRepeatEvent()){
 			if(dirLight.getIntensity() > 0){
 				dirLight.setIntensity(0);
