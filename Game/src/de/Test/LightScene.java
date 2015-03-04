@@ -44,13 +44,13 @@ public class LightScene extends Scene {
 		super.addGameObject(house);
 		house.getTransform().setPosition(new Vector3f(0,0,0));
 		
-		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "bricks_hopefully_tiling.jpg"));
+		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "brown_brick.jpg"));
 		//cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "white.png"));
 		cube.getTransform().setPosition(new Vector3f(5,1,10));
 		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.left(), 0.8f));
-		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("bricks_hopefully_tiling_normal.png"));
-		cube.getModel().getMaterial().setTilesU(0.5f);
-		cube.getModel().getMaterial().setTilesV(0.5f);
+		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("brown_brick_normal.png"));
+		cube.getModel().getMaterial().setTilesU(1);
+		cube.getModel().getMaterial().setTilesV(1);
 		super.addGameObject(cube);
 		
 		for(int i =0; i < 10; i++){
@@ -73,7 +73,7 @@ public class LightScene extends Scene {
 
 	public void update() {
 		//house.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
-			
+		
 		//house.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0002f));
 		
 		//cube.getTransform().rotate(Quaternion.fromAxisAngle(cube.getTransform().getLocalVector(Vector3f.up()), 0.0004f));
