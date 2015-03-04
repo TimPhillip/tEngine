@@ -21,6 +21,7 @@ public class Material {
 	private boolean wireframe;
 	private Texture texture;
 	private Texture normalMap;
+	private Texture dispMap;
 	private float tilesU;
 	private float tilesV;
 	
@@ -33,6 +34,7 @@ public class Material {
 		shader = new StandardShader();
 		texture = Texture.loadFromFile("white.png");
 		normalMap = Texture.loadFromFile("normal_up.jpg");
+		dispMap = Texture.loadFromFile("black.png");
 		setColor(Color.WHITE);
 		setGlow(false);
 		doubleSided = false;
@@ -47,6 +49,8 @@ public class Material {
 		texture.bind();
 		//Bind the normal map to slot 1
 		normalMap.bind(1);
+		//Bind the displacement map to slot 2
+		dispMap.bind(2);
 	}
 	
 	private void setOpenGlStates(){
@@ -186,6 +190,34 @@ public class Material {
 	 */
 	public void setNormalMap(Texture normalMap) {
 		this.normalMap = normalMap;
+	}
+
+	/**
+	 * @return the shader
+	 */
+	public MaterialShader getShader() {
+		return shader;
+	}
+
+	/**
+	 * @param shader the shader to set
+	 */
+	public void setShader(MaterialShader shader) {
+		this.shader = shader;
+	}
+
+	/**
+	 * @return the dispMap
+	 */
+	public Texture getDispMap() {
+		return dispMap;
+	}
+
+	/**
+	 * @param dispMap the dispMap to set
+	 */
+	public void setDispMap(Texture dispMap) {
+		this.dispMap = dispMap;
 	}
 
 }

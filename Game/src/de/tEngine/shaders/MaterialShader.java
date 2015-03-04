@@ -43,5 +43,7 @@ public abstract class MaterialShader extends Shader {
 		super.bind();
 		Engine.getActiveEngine().getRenderer().setBoundMaterialShader(this);
 	}
+	
+	public void SetCameraPosition(Vector3f pos){};
 
 }

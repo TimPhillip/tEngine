@@ -39,9 +39,9 @@ vec3 CalcBumpedNormal(mat3 TBN, vec2 texCoords)
 
 void main(void)
 {
-	vec3 toEye = eyePosition - worldPos;
+	vec3 toEye = normalize(eyePosition - worldPos);
 	mat3 TBN = CalcTBN();
-	vec2 texCoords = pass_texCoord + (toEye * TBN).xy * texture2D(dispMapSampler,pass_texCoord).r;
+	vec2 texCoords = pass_texCoord + (toEye * TBN).xy * (texture2D(dispMapSampler,pass_texCoord).r * 0.09f);
 	vec4 texColor = texture(textureSampler,texCoords * materialTiles) * vec4(materialColor,1);
 	//alpha cutout
 	if(texColor.a < 0.5)

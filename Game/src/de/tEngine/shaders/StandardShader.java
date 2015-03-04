@@ -10,9 +10,11 @@ public class StandardShader extends MaterialShader {
 	
 	private int materialColor_Location;
 	private int materialTiles_Location;
+	private int eyePosition_Location;
 	
 	private int textureSampler_Location;
 	private int normalMapSampler_Location;
+	private int dispMapSampler_Location;
 	
 	public StandardShader(){
 		super(VERTEX_FILE,FRAGMENT_FILE);
@@ -33,9 +35,11 @@ public class StandardShader extends MaterialShader {
 		viewMatrix_Location = super.GetUniformLocation("viewMatrix");
 		materialColor_Location = super.GetUniformLocation("materialColor");
 		materialTiles_Location = super.GetUniformLocation("materialTiles");
+		eyePosition_Location = super.GetUniformLocation("eyePosition");
 		
 		textureSampler_Location = super.GetUniformLocation("textureSampler");
 		normalMapSampler_Location = super.GetUniformLocation("normalMapSampler");
+		dispMapSampler_Location = super.GetUniformLocation("dispMapSampler");
 	}
 	
 	@Override
@@ -43,10 +47,16 @@ public class StandardShader extends MaterialShader {
 		//Set up samplers
 		super.SetUniformInteger(textureSampler_Location, 0);
 		super.SetUniformInteger(normalMapSampler_Location, 1);
+		super.SetUniformInteger(dispMapSampler_Location, 2);
 		
 		super.SetUniformVector2f(materialTiles_Location,new Vector2f(mat.getTilesU(),mat.getTilesV()));
 		Vector3f color = new Vector3f(mat.getColor().getRed() / 255.0f,mat.getColor().getGreen() / 255.0f,mat.getColor().getBlue() / 255.0f);
 		super.SetUniformVector3f(materialColor_Location, color);
+	}
+	
+	@Override
+	public void SetCameraPosition(Vector3f pos){
+		super.SetUniformVector3f(eyePosition_Location, pos);
 	}
 	
 

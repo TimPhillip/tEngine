@@ -81,6 +81,7 @@ public class DeferredRenderer {
 			if (instances == null || instances.isEmpty())
 				continue;
 			m.bind();
+			m.getMaterial().getShader().SetCameraPosition(s.camera.getTransform().getPosition());
 			s.camera.bind();
 			for (GameObject instance : instances) {
 				instance.getTransform().bind();

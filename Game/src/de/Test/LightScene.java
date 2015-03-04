@@ -48,7 +48,8 @@ public class LightScene extends Scene {
 		//cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "white.png"));
 		cube.getTransform().setPosition(new Vector3f(5,1,10));
 		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.left(), 0.8f));
-		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("brown_brick_normal.png",true));
+		//cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("brown_brick_normal.png",true));
+		cube.getModel().getMaterial().setDispMap(Texture.loadFromFile("brown_brick_bump.png",true));
 		cube.getModel().getMaterial().setTilesU(1);
 		cube.getModel().getMaterial().setTilesV(1);
 		super.addGameObject(cube);
