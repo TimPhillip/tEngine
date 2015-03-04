@@ -11,20 +11,27 @@ layout (location = 2) out vec3 NormalOut;
 
 uniform sampler2D textureSampler;
 uniform sampler2D normalMapSampler;
+uniform sampler2D dispMapSampler;
 
 uniform vec3 materialColor;
 uniform vec2 materialTiles;
+uniform vec3 eyePosition;
 
-vec3 CalcBumpedNormal()
-{
-    vec3 Normal = normalize(worldNormal);
+mat3 CalcTBN(){
+	vec3 Normal = normalize(worldNormal);
     vec3 Tangent = normalize(worldTangent);
     Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
     vec3 Bitangent = cross(Tangent, Normal);
-    vec3 BumpMapNormal = texture(normalMapSampler, pass_texCoord * materialTiles).xyz;
+
+	return mat3(Tangent, Bitangent, Normal);
+}
+
+vec3 CalcBumpedNormal(mat3 TBN, vec2 texCoords)
+{
+	vec3 BumpMapNormal = texture(normalMapSampler, texCoords * materialTiles).xyz;
     BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
     vec3 NewNormal;
-    mat3 TBN = mat3(Tangent, Bitangent, Normal);
+    
     NewNormal = TBN * BumpMapNormal;
     NewNormal = normalize(NewNormal);
     return NewNormal;
@@ -32,11 +39,15 @@ vec3 CalcBumpedNormal()
 
 void main(void)
 {
-	vec4 texColor = texture(textureSampler,pass_texCoord * materialTiles) * vec4(materialColor,1);
+	vec3 toEye = eyePosition - worldPos;
+	mat3 TBN = CalcTBN();
+	vec2 texCoords = pass_texCoord + (toEye * TBN).xy * texture2D(dispMapSampler,pass_texCoord).r;
+	vec4 texColor = texture(textureSampler,texCoords * materialTiles) * vec4(materialColor,1);
+	//alpha cutout
 	if(texColor.a < 0.5)
 		discard;
 	DiffuseOut = texColor.xyz;
 	PositionOut = worldPos;
-	NormalOut = CalcBumpedNormal();
+	NormalOut = CalcBumpedNormal(TBN,texCoords);
 }
 
