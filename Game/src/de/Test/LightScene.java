@@ -144,12 +144,7 @@ public class LightScene extends Scene {
 			}
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_M)) {
-			Engine.getActiveEngine().getRenderer().getDeferredRenderer().useFXAA = false;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_N)) {
-			Engine.getActiveEngine().getRenderer().getDeferredRenderer().useFXAA = true;
-		}
+		
 
 	}
 
