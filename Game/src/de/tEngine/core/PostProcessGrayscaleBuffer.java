@@ -8,6 +8,8 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import de.tEngine.core.GBuffer.GBufferTextureType;
+
 public class PostProcessGrayscaleBuffer {
 	private int fboID;
 	private int width;
@@ -28,7 +30,7 @@ public class PostProcessGrayscaleBuffer {
 		
 		//Create Texture
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, grayscaleTexture.getId());
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D,0, GL30.GL_RG32F, width, height, 0,GL11.GL_RGBA, GL11.GL_FLOAT,(ByteBuffer)null);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D,0, GL30.GL_RGB32F, width, height, 0,GL11.GL_RGBA, GL11.GL_FLOAT,(ByteBuffer)null);
 		
 		//Set Filtering
 		GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
@@ -60,5 +62,18 @@ public class PostProcessGrayscaleBuffer {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0 + slot);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, grayscaleTexture.getId());
 	}
+	
+	public void bindForReading(){
+		GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fboID);
+	}
+	
+	public void SetReadBuffer(){
+		SetReadBuffer(GL30.GL_COLOR_ATTACHMENT0);
+	}
+	
+	public void SetReadBuffer(int glFlag){
+		GL11.glReadBuffer(glFlag);
+	}
+	
 	
 }

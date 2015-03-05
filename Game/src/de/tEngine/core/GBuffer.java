@@ -119,7 +119,7 @@ public class GBuffer {
 	}
 	
 	public void SetReadBuffer(GBufferTextureType texture){
-		SetReadBuffer(GL30.GL_COLOR_ATTACHMENT0 + texture.getValue());
+		SetReadBuffer(GL30.GL_COLOR_ATTACHMENT0  + texture.getValue());
 	}
 	
 	public void SetReadBuffer(int glFlag){

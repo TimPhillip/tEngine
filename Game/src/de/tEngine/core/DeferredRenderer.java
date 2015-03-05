@@ -21,8 +21,10 @@ import de.tEngine.shaders.*;
 public class DeferredRenderer {
 
 	private GBuffer gBuffer;
-	private boolean showGBuffer = false;
-	private boolean showShadowMap = false;
+	public boolean showGBuffer =false;
+	public boolean showShadowMap = false;
+	public boolean drawGrayscale =false;
+	public boolean useFXAA = false;
 
 	private DirectionalLightPassShader dirLightShader;
 	private PointLightPassShader pointLightShader;
@@ -49,9 +51,9 @@ public class DeferredRenderer {
 		gausBlurFilter = new GausianBlurFilter();
 		grayscaleFilter = new GrayscaleFilter();
 		fxaaFilter = new FXAAFilter();
-		
+
 		postProcessGrayscaleBuffer = new PostProcessGrayscaleBuffer(Machine
-				.getInstance().getWidth(), Machine.getInstance().getWidth());
+				.getInstance().getWidth(), Machine.getInstance().getHeight());
 		shadowMap = new ShadowMap(2048, 2048);
 		shadowDepth = new TexturePane();
 	}
@@ -254,15 +256,9 @@ public class DeferredRenderer {
 	}
 
 	private void finalPass(Scene s) {
-		doPostProcessing();
+		
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-		gBuffer.bindForFinalPass();
-		GL30.glBlitFramebuffer(0, 0, Machine.getInstance().getWidth(), Machine
-				.getInstance().getHeight(), 0, 0, Machine.getInstance()
-				.getWidth(), Machine.getInstance().getHeight(),
-				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
-
+		doPostProcessing();
 		
 		// Draw GUIs
 		if (showShadowMap) {
@@ -275,19 +271,33 @@ public class DeferredRenderer {
 	}
 
 	private void doPostProcessing() {
-		grayScalePostProcessing();
-		fxaaPostProcessing();
+		
+		if (useFXAA) {
+			grayScalePostProcessing();
+			fxaaPostProcessing();
+		}else{
+			gBuffer.bindForFinalPass();
+			GL30.glBlitFramebuffer(0, 0, Machine.getInstance().getWidth(), Machine
+					.getInstance().getHeight(), 0, 0, Machine.getInstance()
+					.getWidth(), Machine.getInstance().getHeight(),
+					GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+	
+		}
+		if(drawGrayscale){
+			drawPostProcessGrayscaleBuffer();
+		}
 	}
 
 	private void fxaaPostProcessing() {
 		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine
 				.getInstance().getHeight());
 		fxaaFilter.bind();
+		fxaaFilter.setUpTextureUnits();
 		gBuffer.bindForPostProcessing();
 		postProcessGrayscaleBuffer.bindForReading(1);
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
 		applyFilter(fxaaFilter);
-		
+
 	}
 
 	private void grayScalePostProcessing() {
@@ -301,4 +311,20 @@ public class DeferredRenderer {
 				.getInstance().getHeight());
 	}
 	
+	private void drawPostProcessGrayscaleBuffer() {
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
+		GL11.glClearColor(0, 0, 0, 1);
+		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
+		postProcessGrayscaleBuffer.bindForReading();
+		int width = Machine.getInstance().getWidth();
+		int height = Machine.getInstance().getHeight();
+		
+		// Display Position in the lower left corner
+		postProcessGrayscaleBuffer.SetReadBuffer();
+		GL30.glBlitFramebuffer(0, 0, width, height, 0, 0,width,
+				height, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+		
+	}
+
+
 }
