@@ -30,17 +30,18 @@ public class Machine {
 	private int cpuCount;
 	private FrameRateStatus frameRateStatus;
 	private boolean fullscreen;
-
+	private boolean fxaa;
 	public Machine() {
 		os = OperatingSystem.determineOS();
-		readResolutionFromConfig("res/settings/settings.xml");
+		readSettingsFromConfig("res/settings/settings.xml");
 	}
 
-	private void readResolutionFromConfig(String path) {
+	private void readSettingsFromConfig(String path) {
 		try {
 			Document doc = new SAXBuilder().build(new File(path));
 			Element root = doc.getRootElement();
 			Element graphics = root.getChild("graphics");
+			fxaa = Boolean.parseBoolean(graphics.getChildText("FXAA"));
 			Element res = graphics.getChild("resolution");
 			width = Integer.parseInt(res.getChild("width").getText());
 			height = Integer.parseInt(res.getChild("height").getText());
@@ -77,6 +78,14 @@ public class Machine {
 
 	public int getWidth() {
 		return width;
+	}
+
+	public boolean isFxaa() {
+		return fxaa;
+	}
+
+	public void setFxaa(boolean fxaa) {
+		this.fxaa = fxaa;
 	}
 
 	public void setWidth(int width) {

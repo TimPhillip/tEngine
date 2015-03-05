@@ -6,6 +6,7 @@
 			<frames>max</frames>
 			<fullscreen>false</fullscreen>
 		</resolution>
+		<FXAA>true</FXAA>
 	</graphics>
 	<system>
 	    <cpuCount>8</cpuCount>

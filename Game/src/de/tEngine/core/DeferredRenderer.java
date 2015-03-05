@@ -24,7 +24,7 @@ public class DeferredRenderer {
 	public boolean showGBuffer =false;
 	public boolean showShadowMap = false;
 	public boolean drawGrayscale =false;
-	public boolean useFXAA = false;
+	
 
 	private DirectionalLightPassShader dirLightShader;
 	private PointLightPassShader pointLightShader;
@@ -276,7 +276,7 @@ public class DeferredRenderer {
 
 	private void doPostProcessing() {
 		
-		if (useFXAA) {
+		if (Machine.getInstance().isFxaa()) {
 			grayScalePostProcessing();
 			fxaaPostProcessing();
 		}else{
