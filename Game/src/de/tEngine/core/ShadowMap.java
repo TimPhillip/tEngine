@@ -57,7 +57,7 @@ public class ShadowMap {
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_DEPTH_COMPONENT, width, height, 0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, (ByteBuffer)null);
 		GL30.glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture.getId(), 0);
 		
-		//No draw buffers
+		
 		GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
 		GL11.glReadBuffer(GL11.GL_NONE);
 		

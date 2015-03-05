@@ -28,11 +28,12 @@ public class DeferredRenderer {
 	private PointLightPassShader pointLightShader;
 	private StencilPassShader stencilShader;
 	private ShadowMapShader shadowMapShader;
-	
-	
+
 	private GausianBlurFilter gausBlurFilter;
 	private GrayscaleFilter grayscaleFilter;
+	private FXAAFilter fxaaFilter;
 
+	private PostProcessGrayscaleBuffer postProcessGrayscaleBuffer;
 	private ShadowMap shadowMap;
 	private TexturePane shadowDepth;
 
@@ -44,18 +45,21 @@ public class DeferredRenderer {
 		pointLightShader = new PointLightPassShader();
 		stencilShader = new StencilPassShader();
 		shadowMapShader = new ShadowMapShader();
-		
+
 		gausBlurFilter = new GausianBlurFilter();
 		grayscaleFilter = new GrayscaleFilter();
+		fxaaFilter = new FXAAFilter();
 		
-		shadowMap = new ShadowMap(2048,2048);
+		postProcessGrayscaleBuffer = new PostProcessGrayscaleBuffer(Machine
+				.getInstance().getWidth(), Machine.getInstance().getWidth());
+		shadowMap = new ShadowMap(2048, 2048);
 		shadowDepth = new TexturePane();
 	}
 
 	public void render(Scene s) {
 		gBuffer.startFrame();
 		geometryPass(s);
-		
+
 		blurShadowMap(shadowMap, 0.9f);
 		if (showGBuffer) {
 			drawGBufferElements();
@@ -69,22 +73,24 @@ public class DeferredRenderer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthMask(true);
 		GL11.glDisable(GL11.GL_BLEND);
-		//Clear the shadow map
+		// Clear the shadow map
 		shadowMap.bindForWriting();
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
-		//Clear the gBuffer
+		// Clear the gBuffer
 		gBuffer.bindForWriting();
 		GL11.glClearColor(0, 0, 0, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		
+
 		for (Model m : Model.getAllModels()) {
 			gBuffer.bindForWriting();
-			GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+			GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine
+					.getInstance().getHeight());
 			List<GameObject> instances = s.getModelInstancesMap().get(m);
 			if (instances == null || instances.isEmpty())
 				continue;
 			m.bind();
-			m.getMaterial().getShader().SetCameraPosition(s.camera.getTransform().getPosition());
+			m.getMaterial().getShader()
+					.SetCameraPosition(s.camera.getTransform().getPosition());
 			s.camera.bind();
 			for (GameObject instance : instances) {
 				instance.getTransform().bind();
@@ -96,7 +102,7 @@ public class DeferredRenderer {
 			shadowMapShader.bind();
 			shadowMapShader.setLightView(s.dirLight.getLightViewMatrix());
 			shadowMapShader.setLightProj(s.dirLight.getLightProjMatrix());
-			
+
 			m.getMesh().bind();
 			for (GameObject instance : instances) {
 				shadowMapShader.setWorldMatrix(instance.transform
@@ -104,24 +110,28 @@ public class DeferredRenderer {
 				instance.getModel().getMesh().draw();
 			}
 			Shader.unbind();
-			GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+			GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine
+					.getInstance().getHeight());
 		}
 	}
-	
-	private void blurShadowMap(ShadowMap shadowMap,float blurFactor){
+
+	private void blurShadowMap(ShadowMap shadowMap, float blurFactor) {
 		GL11.glViewport(0, 0, shadowMap.getWidth(), shadowMap.getHeight());
 		gausBlurFilter.bind();
-		gausBlurFilter.SetBlurScale(new Vector3f(1.0f / (shadowMap.getWidth() * blurFactor),0,0));
+		gausBlurFilter.SetBlurScale(new Vector3f(
+				1.0f / (shadowMap.getWidth() * blurFactor), 0, 0));
 		shadowMap.bindForFiltering(false);
 		applyFilter(gausBlurFilter);
 		gausBlurFilter.bind();
-		gausBlurFilter.SetBlurScale(new Vector3f(0,1.0f / (shadowMap.getHeight() * blurFactor),0));
+		gausBlurFilter.SetBlurScale(new Vector3f(0, 1.0f / (shadowMap
+				.getHeight() * blurFactor), 0));
 		shadowMap.bindForFiltering(true);
 		applyFilter(gausBlurFilter);
-		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine
+				.getInstance().getHeight());
 	}
-	
-	private void applyFilter(FilterShader filter){
+
+	private void applyFilter(FilterShader filter) {
 		GL11.glDepthMask(false);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_CULL_FACE);
@@ -146,16 +156,16 @@ public class DeferredRenderer {
 		int halfHeight = height / 2;
 		// Display Position in the lower left corner
 		gBuffer.SetReadBuffer(GBufferTextureType.Position);
-		GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, halfWidth, halfHeight,
-				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+		GL30.glBlitFramebuffer(0, 0, width, height, 0, 0, halfWidth,
+				halfHeight, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 		// Display Diffuse in the upper left corner
 		gBuffer.SetReadBuffer(GBufferTextureType.Diffuse);
-		GL30.glBlitFramebuffer(0, 0, width, height, 0, halfHeight, halfWidth, height,
-				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+		GL30.glBlitFramebuffer(0, 0, width, height, 0, halfHeight, halfWidth,
+				height, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 		// Display Normal in the upper right corner
 		gBuffer.SetReadBuffer(GBufferTextureType.Normal);
-		GL30.glBlitFramebuffer(0, 0, width, height, halfWidth, halfHeight, width,
-				height, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+		GL30.glBlitFramebuffer(0, 0, width, height, halfWidth, halfHeight,
+				width, height, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 	}
 
 	private void lightPass(Scene s) {
@@ -186,7 +196,8 @@ public class DeferredRenderer {
 	private void directionalLightPass(Scene s) {
 		dirLightShader.bind();
 		LightBoundingVolume.screenQuad.bind();
-		dirLightShader.SetScreenSize(Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+		dirLightShader.SetScreenSize(Machine.getInstance().getWidth(), Machine
+				.getInstance().getHeight());
 		dirLightShader.SetUpTextureUnits();
 		dirLightShader.SetCameraPosition(s.camera.getTransform().getPosition());
 		dirLightShader.SetDirectionalLight(s.dirLight);
@@ -216,7 +227,7 @@ public class DeferredRenderer {
 			// Stencil pass
 			GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
 
-			Matrix4f wvp = Matrix4f.mul(viewProj,p.getToWorldMatrix());
+			Matrix4f wvp = Matrix4f.mul(viewProj, p.getToWorldMatrix());
 			stencilShader.SetWorldViewProjMatrix(wvp);
 			p.getBoundingVolume().draw();
 			Shader.unbind();
@@ -231,10 +242,11 @@ public class DeferredRenderer {
 			pointLightShader.bind();
 			// light pass
 			pointLightShader.SetUpTextureUnits();
-			pointLightShader.SetScreenSize(Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+			pointLightShader.SetScreenSize(Machine.getInstance().getWidth(),
+					Machine.getInstance().getHeight());
 			pointLightShader.SetPointLight(p);
-			pointLightShader.SetWorldViewProj(Matrix4f.mul(
-					viewProj,p.getToWorldMatrix()));
+			pointLightShader.SetWorldViewProj(Matrix4f.mul(viewProj,
+					p.getToWorldMatrix()));
 			LightBoundingVolume.sphere.draw();
 		}
 
@@ -242,16 +254,16 @@ public class DeferredRenderer {
 	}
 
 	private void finalPass(Scene s) {
+		doPostProcessing();
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		/*gBuffer.bindForFinalPass();
+
+		gBuffer.bindForFinalPass();
 		GL30.glBlitFramebuffer(0, 0, Machine.getInstance().getWidth(), Machine
 				.getInstance().getHeight(), 0, 0, Machine.getInstance()
 				.getWidth(), Machine.getInstance().getHeight(),
 				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 
-		*/
 		
-		grayScalePostProcessing();
 		// Draw GUIs
 		if (showShadowMap) {
 			GL11.glDisable(GL11.GL_CULL_FACE);
@@ -261,13 +273,32 @@ public class DeferredRenderer {
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
 	}
-	
-	private void grayScalePostProcessing(){
-		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+
+	private void doPostProcessing() {
+		grayScalePostProcessing();
+		fxaaPostProcessing();
+	}
+
+	private void fxaaPostProcessing() {
+		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine
+				.getInstance().getHeight());
+		fxaaFilter.bind();
+		gBuffer.bindForPostProcessing();
+		postProcessGrayscaleBuffer.bindForReading(1);
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
+		applyFilter(fxaaFilter);
+		
+	}
+
+	private void grayScalePostProcessing() {
+		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine
+				.getInstance().getHeight());
 		grayscaleFilter.bind();
 		gBuffer.bindForPostProcessing();
-		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
+		postProcessGrayscaleBuffer.bindForWriting();
 		applyFilter(grayscaleFilter);
-		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine
+				.getInstance().getHeight());
 	}
+	
 }
