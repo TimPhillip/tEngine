@@ -47,19 +47,19 @@ public class LightScene extends Scene {
 
 		house.getTransform().setPosition(new Vector3f(0,0,0));
 		
-		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "bricks2.jpg"));
+		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "brown_brick.jpg"));
 		//cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "white.png"));
 		cube.getTransform().setPosition(new Vector3f(5,1,10));
 		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.left(), 0.8f));
-		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("bricks2_normal.jpg",true));
-		cube.getModel().getMaterial().setDispMap(Texture.loadFromFile("bricks2_disp.jpg",true));
-		cube.getModel().getMaterial().setSpecularMap(Texture.loadFromFile("bricks2_disp.jpg",true));
+		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("brown_brick_normal.png",true));
+		cube.getModel().getMaterial().setDispMap(Texture.loadFromFile("brown_brick_bump.png",true));
+		cube.getModel().getMaterial().setSpecularMap(Texture.loadFromFile("brown_brick_bump.png",true));
 
 		cube.getModel().getMaterial().setTilesU(1);
 		cube.getModel().getMaterial().setTilesV(1);
 		super.addGameObject(cube);
 
-		for(int i =0; i < 0; i++){
+		for(int i =0; i < 20; i++){
 		GameObject l = new GameObject(null);
 		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
 		//l.getTransform().setPosition(new Vector3f(5,1,12));
