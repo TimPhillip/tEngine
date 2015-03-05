@@ -29,7 +29,9 @@ public class DeferredRenderer {
 	private StencilPassShader stencilShader;
 	private ShadowMapShader shadowMapShader;
 	
+	
 	private GausianBlurFilter gausBlurFilter;
+	private GrayscaleFilter grayscaleFilter;
 
 	private ShadowMap shadowMap;
 	private TexturePane shadowDepth;
@@ -44,7 +46,8 @@ public class DeferredRenderer {
 		shadowMapShader = new ShadowMapShader();
 		
 		gausBlurFilter = new GausianBlurFilter();
-
+		grayscaleFilter = new GrayscaleFilter();
+		
 		shadowMap = new ShadowMap(2048,2048);
 		shadowDepth = new TexturePane();
 	}
@@ -240,12 +243,15 @@ public class DeferredRenderer {
 
 	private void finalPass(Scene s) {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		gBuffer.bindForFinalPass();
+		/*gBuffer.bindForFinalPass();
 		GL30.glBlitFramebuffer(0, 0, Machine.getInstance().getWidth(), Machine
 				.getInstance().getHeight(), 0, 0, Machine.getInstance()
 				.getWidth(), Machine.getInstance().getHeight(),
 				GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 
+		*/
+		
+		grayScalePostProcessing();
 		// Draw GUIs
 		if (showShadowMap) {
 			GL11.glDisable(GL11.GL_CULL_FACE);
@@ -254,5 +260,14 @@ public class DeferredRenderer {
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
+	}
+	
+	private void grayScalePostProcessing(){
+		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
+		grayscaleFilter.bind();
+		gBuffer.bindForPostProcessing();
+		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, 0);
+		applyFilter(grayscaleFilter);
+		GL11.glViewport(0, 0, Machine.getInstance().getWidth(), Machine.getInstance().getHeight());
 	}
 }
