@@ -20,6 +20,10 @@ public class MasterRenderer {
 		deferredRenderer.init();
 	}
 	
+	public DeferredRenderer getDeferredRenderer() {
+		return deferredRenderer;
+	}
+
 	public void render(Scene s)
 	{
 		if(s == null){

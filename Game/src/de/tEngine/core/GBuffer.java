@@ -121,10 +121,15 @@ public class GBuffer {
 	}
 	
 	public void SetReadBuffer(GBufferTextureType texture){
-		SetReadBuffer(GL30.GL_COLOR_ATTACHMENT0 + texture.getValue());
+		SetReadBuffer(GL30.GL_COLOR_ATTACHMENT0  + texture.getValue());
 	}
 	
 	public void SetReadBuffer(int glFlag){
 		GL11.glReadBuffer(glFlag);
+	}
+	
+	public void bindForPostProcessing(){
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D,finalTexture.getId() );
 	}
 }
