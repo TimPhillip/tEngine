@@ -11,6 +11,7 @@ public class StandardShader extends MaterialShader {
 	private int materialColor_Location;
 	private int materialTiles_Location;
 	private int eyePosition_Location;
+	private int dispScale_Location;
 	
 	private int textureSampler_Location;
 	private int normalMapSampler_Location;
@@ -36,6 +37,7 @@ public class StandardShader extends MaterialShader {
 		materialColor_Location = super.GetUniformLocation("materialColor");
 		materialTiles_Location = super.GetUniformLocation("materialTiles");
 		eyePosition_Location = super.GetUniformLocation("eyePosition");
+		dispScale_Location = super.GetUniformLocation("dispScale");
 		
 		textureSampler_Location = super.GetUniformLocation("textureSampler");
 		normalMapSampler_Location = super.GetUniformLocation("normalMapSampler");
@@ -52,6 +54,7 @@ public class StandardShader extends MaterialShader {
 		super.SetUniformVector2f(materialTiles_Location,new Vector2f(mat.getTilesU(),mat.getTilesV()));
 		Vector3f color = new Vector3f(mat.getColor().getRed() / 255.0f,mat.getColor().getGreen() / 255.0f,mat.getColor().getBlue() / 255.0f);
 		super.SetUniformVector3f(materialColor_Location, color);
+		super.SetUniformFloat(dispScale_Location, mat.getDisplacementScale());
 	}
 	
 	@Override

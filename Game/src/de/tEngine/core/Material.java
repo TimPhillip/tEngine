@@ -24,6 +24,7 @@ public class Material {
 	private Texture dispMap;
 	private float tilesU;
 	private float tilesV;
+	private float displacementScale;
 	
 	/**
 	 * Creates a new standard material.
@@ -40,6 +41,7 @@ public class Material {
 		doubleSided = false;
 		tilesU = 1.0f;
 		tilesV = 1.0f;
+		displacementScale = 0.0f;
 	}
 	
 	public void bind(){
@@ -218,6 +220,20 @@ public class Material {
 	 */
 	public void setDispMap(Texture dispMap) {
 		this.dispMap = dispMap;
+	}
+
+	/**
+	 * @return the displacementScale
+	 */
+	public float getDisplacementScale() {
+		return displacementScale;
+	}
+
+	/**
+	 * @param displacementScale the displacementScale to set
+	 */
+	public void setDisplacementScale(float displacementScale) {
+		this.displacementScale = displacementScale;
 	}
 
 }

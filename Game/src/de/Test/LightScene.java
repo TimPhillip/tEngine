@@ -44,12 +44,12 @@ public class LightScene extends Scene {
 		super.addGameObject(house);
 		house.getTransform().setPosition(new Vector3f(0,0,0));
 		
-		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "brown_brick.jpg"));
+		cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "bricks2.jpg"));
 		//cube = new GameObject(OBJLoader.ModelFromFile("cube.obj", "white.png"));
 		cube.getTransform().setPosition(new Vector3f(5,1,10));
 		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.left(), 0.8f));
-		//cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("brown_brick_normal.png",true));
-		cube.getModel().getMaterial().setDispMap(Texture.loadFromFile("brown_brick_bump.png",true));
+		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("bricks2_normal.jpg",true));
+		cube.getModel().getMaterial().setDispMap(Texture.loadFromFile("bricks2_disp.jpg",true));
 		cube.getModel().getMaterial().setTilesU(1);
 		cube.getModel().getMaterial().setTilesV(1);
 		super.addGameObject(cube);
@@ -111,6 +111,14 @@ public class LightScene extends Scene {
 				dirLight.setIntensity(0);
 			}else{
 				dirLight.setIntensity(1);
+			}
+		}
+		
+		if(Keyboard.isKeyDown(Keyboard.KEY_P)){
+			if(cube.getModel().getMaterial().getDisplacementScale() > 0){
+				cube.getModel().getMaterial().setDisplacementScale(0);
+			}else{
+				cube.getModel().getMaterial().setDisplacementScale(0.03f);
 			}
 		}
 		

@@ -16,6 +16,7 @@ uniform sampler2D dispMapSampler;
 uniform vec3 materialColor;
 uniform vec2 materialTiles;
 uniform vec3 eyePosition;
+uniform float dispScale;
 
 mat3 CalcTBN(){
 	vec3 Normal = normalize(worldNormal);
@@ -41,7 +42,7 @@ void main(void)
 {
 	vec3 toEye = normalize(eyePosition - worldPos);
 	mat3 TBN = CalcTBN();
-	vec2 texCoords = pass_texCoord + (toEye * TBN).xy * (texture2D(dispMapSampler,pass_texCoord).r * 0.09f);
+	vec2 texCoords = pass_texCoord + (toEye * TBN).xy * (texture2D(dispMapSampler,pass_texCoord).r * dispScale);
 	vec4 texColor = texture(textureSampler,texCoords * materialTiles) * vec4(materialColor,1);
 	//alpha cutout
 	if(texColor.a < 0.5)
