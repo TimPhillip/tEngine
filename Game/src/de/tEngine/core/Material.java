@@ -22,6 +22,7 @@ public class Material {
 	private Texture texture;
 	private Texture normalMap;
 	private Texture dispMap;
+	private Texture specularMap;
 	private float tilesU;
 	private float tilesV;
 	private float displacementScale;
@@ -36,6 +37,7 @@ public class Material {
 		texture = Texture.loadFromFile("white.png");
 		normalMap = Texture.loadFromFile("normal_up.jpg");
 		dispMap = Texture.loadFromFile("black.png");
+		specularMap = Texture.loadFromFile("white.png");
 		setColor(Color.WHITE);
 		setGlow(false);
 		doubleSided = false;
@@ -53,6 +55,8 @@ public class Material {
 		normalMap.bind(1);
 		//Bind the displacement map to slot 2
 		dispMap.bind(2);
+		//Bind the specular map to slot 3
+		specularMap.bind(3);
 	}
 	
 	private void setOpenGlStates(){
@@ -234,6 +238,20 @@ public class Material {
 	 */
 	public void setDisplacementScale(float displacementScale) {
 		this.displacementScale = displacementScale;
+	}
+
+	/**
+	 * @return the specularMap
+	 */
+	public Texture getSpecularMap() {
+		return specularMap;
+	}
+
+	/**
+	 * @param specularMap the specularMap to set
+	 */
+	public void setSpecularMap(Texture specularMap) {
+		this.specularMap = specularMap;
 	}
 
 }

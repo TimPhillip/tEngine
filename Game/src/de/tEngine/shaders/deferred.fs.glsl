@@ -8,10 +8,12 @@ in vec3 worldPos;
 layout (location = 0) out vec3 PositionOut;
 layout (location = 1) out vec3 DiffuseOut;
 layout (location = 2) out vec3 NormalOut;
+layout (location = 3) out vec3 MaterialOut;
 
 uniform sampler2D textureSampler;
 uniform sampler2D normalMapSampler;
 uniform sampler2D dispMapSampler;
+uniform sampler2D specularMapSampler;
 
 uniform vec3 materialColor;
 uniform vec2 materialTiles;
@@ -50,5 +52,6 @@ void main(void)
 	DiffuseOut = texColor.xyz;
 	PositionOut = worldPos;
 	NormalOut = CalcBumpedNormal(TBN,texCoords);
+	MaterialOut = vec3(texture2D(specularMapSampler,texCoords).xy,0);
 }
 

@@ -3,6 +3,7 @@
 uniform sampler2D gBufferPosition;
 uniform sampler2D gBufferDiffuse;
 uniform sampler2D gBufferNormal;
+uniform sampler2D gBufferMaterial;
 
 uniform sampler2D shadowMap;
 uniform mat4 lightViewProj;
@@ -51,9 +52,12 @@ void main(void)
 	
 	float diffuseFactor = max(dot(lightDirection * -1,Normal),0);
 	vec3 toEye = normalize(eyePosition - Position);
-	float specPower = 10.0f;
 	vec3 r = reflect(lightDirection,Normal);
-	float specFactor = pow(max(dot(toEye,r),0.0f),specPower);
+	
+	float specPower = texture2D(gBufferMaterial,TexCoord).y * 10 + 1;
+	float specFactor = texture2D(gBufferMaterial,TexCoord).x;
+	specFactor *= pow(max(dot(toEye,r),0.0f),specPower);
+	
 	if(dot(lightDirection * -1,Normal) <= 0){
 		specFactor = 0;}
 	

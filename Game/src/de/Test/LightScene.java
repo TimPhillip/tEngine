@@ -50,11 +50,12 @@ public class LightScene extends Scene {
 		cube.getTransform().setRotation(Quaternion.fromAxisAngle(Vector3f.left(), 0.8f));
 		cube.getModel().getMaterial().setNormalMap(Texture.loadFromFile("bricks2_normal.jpg",true));
 		cube.getModel().getMaterial().setDispMap(Texture.loadFromFile("bricks2_disp.jpg",true));
+		cube.getModel().getMaterial().setSpecularMap(Texture.loadFromFile("bricks2_disp.jpg",true));
 		cube.getModel().getMaterial().setTilesU(1);
 		cube.getModel().getMaterial().setTilesV(1);
 		super.addGameObject(cube);
 		
-		for(int i =0; i < 10; i++){
+		for(int i =0; i < 0; i++){
 		GameObject l = new GameObject(null);
 		l.getTransform().setPosition(new Vector3f((float)Math.random() * 100 - 50,0.5f,(float)Math.random() * 100 - 50));
 		//l.getTransform().setPosition(new Vector3f(5,1,12));
@@ -75,9 +76,9 @@ public class LightScene extends Scene {
 	public void update() {
 		//house.getTransform().rotate(Quaternion.fromAxisAngle(new Vector3f(0,1,0), 0.002f));
 		
-		cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0020f));
+		//cube.getTransform().rotate(Quaternion.fromAxisAngle(Vector3f.up(), 0.0020f));
 		
-		//cube.getTransform().rotate(Quaternion.fromAxisAngle(cube.getTransform().getLocalVector(Vector3f.up()), 0.0004f));
+		cube.getTransform().rotate(Quaternion.fromAxisAngle(cube.getTransform().getLocalVector(Vector3f.up()), 0.0004f));
 		dirLight.getGameObject().getTransform().rotate(Quaternion.fromAxisAngle(dirLight.getTransform().getLocalVector(Vector3f.up()), 0.0001f));
 		
 		timer ++;

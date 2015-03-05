@@ -15,7 +15,8 @@ public class GBuffer {
 	public enum GBufferTextureType{
 		Position(0),
 		Diffuse(1),
-		Normal(2);
+		Normal(2),
+		Material(3);
 		private int value;
 		private GBufferTextureType(int value){
 			this.value = value;
@@ -37,7 +38,7 @@ public class GBuffer {
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, fboID);
 		
 		//Create the GBuffer textures
-		textures = Texture.generateTextures(3);
+		textures = Texture.generateTextures(4);
 		depthTexture = Texture.generateTextures(1)[0];
 		finalTexture = Texture.generateTextures(1)[0];
 		
@@ -65,10 +66,11 @@ public class GBuffer {
 		GL30.glFramebufferTexture2D(GL30.GL_DRAW_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT4, GL11.GL_TEXTURE_2D, finalTexture.getId(), 0);
 		
 		
-		drawBuffers = BufferUtils.createIntBuffer(3);
+		drawBuffers = BufferUtils.createIntBuffer(4);
 		drawBuffers.put(GL30.GL_COLOR_ATTACHMENT0);
 		drawBuffers.put(GL30.GL_COLOR_ATTACHMENT1);
 		drawBuffers.put(GL30.GL_COLOR_ATTACHMENT2);
+		drawBuffers.put(GL30.GL_COLOR_ATTACHMENT3);
 		drawBuffers.flip();
 		GL20.glDrawBuffers(drawBuffers);
 		

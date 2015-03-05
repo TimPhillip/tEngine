@@ -153,6 +153,10 @@ public class DeferredRenderer {
 		gBuffer.SetReadBuffer(GBufferTextureType.Normal);
 		GL30.glBlitFramebuffer(0, 0, width, height, halfWidth, halfHeight, width,
 				height, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+		//Display Material in the lower right corner
+		gBuffer.SetReadBuffer(GBufferTextureType.Material);
+		GL30.glBlitFramebuffer(0, 0, width, height, halfWidth, 0, width,
+				halfHeight, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
 	}
 
 	private void lightPass(Scene s) {
@@ -188,7 +192,7 @@ public class DeferredRenderer {
 		dirLightShader.SetCameraPosition(s.camera.getTransform().getPosition());
 		dirLightShader.SetDirectionalLight(s.dirLight);
 		dirLightShader.SetWorldViewProj(Matrix4f.identity());
-		shadowMap.bindForReading(3);
+		shadowMap.bindForReading(4);
 		LightBoundingVolume.screenQuad.draw();
 		Shader.unbind();
 	}

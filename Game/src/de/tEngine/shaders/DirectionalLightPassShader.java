@@ -19,6 +19,7 @@ public class DirectionalLightPassShader extends Shader {
 	private int gPosition_Location;
 	private int gDiffuse_Location;
 	private int gNormal_Location;
+	private int gMaterial_Location;
 	private int shadowMap_Location;
 	private int screenSize_Location;
 	private int eyePos_Location;
@@ -37,9 +38,12 @@ public class DirectionalLightPassShader extends Shader {
 		worldViewProjMatrix_Location = super.GetUniformLocation("worldViewProj");
 		lightDirection_Location = super.GetUniformLocation("lightDirection");
 		lightColor_Location = super.GetUniformLocation("lightColor");
+		
 		gPosition_Location = super.GetUniformLocation("gBufferPosition");
 		gDiffuse_Location = super.GetUniformLocation("gBufferDiffuse");
 		gNormal_Location = super.GetUniformLocation("gBufferNormal");
+		gMaterial_Location = super.GetUniformLocation("gBufferMaterial");
+		
 		lightIntensity_Location = super.GetUniformLocation("lightIntensity");
 		lightViewProj_Location = super.GetUniformLocation("lightViewProj");
 		shadowMap_Location = super.GetUniformLocation("shadowMap");
@@ -64,7 +68,8 @@ public class DirectionalLightPassShader extends Shader {
 		super.SetUniformInteger(gPosition_Location, 0);
 		super.SetUniformInteger(gDiffuse_Location, 1);
 		super.SetUniformInteger(gNormal_Location, 2);
-		super.SetUniformInteger(shadowMap_Location, 3);
+		super.SetUniformInteger(gMaterial_Location, 3);
+		super.SetUniformInteger(shadowMap_Location, 4);
 	}
 	
 	public void SetScreenSize(int width,int height){

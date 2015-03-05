@@ -16,6 +16,7 @@ public class StandardShader extends MaterialShader {
 	private int textureSampler_Location;
 	private int normalMapSampler_Location;
 	private int dispMapSampler_Location;
+	private int specularMapSampler_Location;
 	
 	public StandardShader(){
 		super(VERTEX_FILE,FRAGMENT_FILE);
@@ -42,6 +43,7 @@ public class StandardShader extends MaterialShader {
 		textureSampler_Location = super.GetUniformLocation("textureSampler");
 		normalMapSampler_Location = super.GetUniformLocation("normalMapSampler");
 		dispMapSampler_Location = super.GetUniformLocation("dispMapSampler");
+		specularMapSampler_Location = super.GetUniformLocation("specularMapSampler");
 	}
 	
 	@Override
@@ -50,6 +52,7 @@ public class StandardShader extends MaterialShader {
 		super.SetUniformInteger(textureSampler_Location, 0);
 		super.SetUniformInteger(normalMapSampler_Location, 1);
 		super.SetUniformInteger(dispMapSampler_Location, 2);
+		super.SetUniformInteger(specularMapSampler_Location, 3);
 		
 		super.SetUniformVector2f(materialTiles_Location,new Vector2f(mat.getTilesU(),mat.getTilesV()));
 		Vector3f color = new Vector3f(mat.getColor().getRed() / 255.0f,mat.getColor().getGreen() / 255.0f,mat.getColor().getBlue() / 255.0f);
